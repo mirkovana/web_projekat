@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Log in</title>
+		<link href="css/style.css" rel="stylesheet">
+		<script src="js/jquery.min.js"></script>
+		<script src="js/script.js"></script>
+		
+		<link rel="stylesheet" href="bootstrap-4.3.1-dist/css/bootstrap.min.css">
+		
+		<script src="bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
+		
+		<script>
+			$(document).ready( function() {
+				isLoggedIn();
+			});
+		</script>
+	</head>
+	<body>
+		<form id="login">
+			<table id="form_holder">
+				<tr>
+					<td>Korisničko ime</td>
+				</tr>
+				<tr>
+					<td><input type="text" name="korisnickoIme"/>
+				</tr>
+				<tr>
+					<td>Lozinka</td>
+				</tr>
+				<tr>
+					<td><input type="password" name="lozinka"/>
+				</tr>
+				<tr>
+					<td><input type="button" value="Prijava" onclick="login()" class="btn btn-primary"></td>
+				</tr>
+			</table>
+			<fieldset id="log_war"></fieldset>
+		</form>
+	</body>
+</html>
