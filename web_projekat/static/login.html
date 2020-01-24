@@ -19,8 +19,9 @@
 	</head>
 	<body id="homepage">
 		<h2>VM</h2>
-		
-	
+		<br>
+		<input type = "text" placeholder="Pretraga" id = "pretraga" onkeyup="pretraga()">
+		<br>
 		<table id="tabela_vm" class="table_cell_spacing" border = "1">
 			<thead><tr>
 				<form id = "filter">
@@ -40,6 +41,16 @@
 			</tr></thead>
 		</table>
 		<hr>
-		<a href="rest/logout">Odjava</a>
+		<div >
+		  <button onclick = "ucitajOrganizacije()">Organizacije</button>
+		  <button onclick = "ucitajKorisnike()">Korisnici</button>
+		  <button onclick = "ucitajKategorije()">Kategorije</button>
+		  <button onclick = "ucitajDiskove()">Diskovi</button>
+		</div>
+		<br>
+		<table id="tabela_ostali_podaci" class="table_cell_spacing" border = "1">
+		</table>
+		<hr>
+		<a href="index.html">Odjava</a>
 	</body>
 </html>

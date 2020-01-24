@@ -79,6 +79,22 @@ public class VMApp {
 		
 		port(8080);
 		
+		mape.addOrganizacija(org1);
+		mape.addOrganizacija(org2);
+		mape.addKorisnik(Korisnik1);
+		mape.addKorisnik(Korisnik2);
+		mape.addKorisnik(Korisnik3);
+		mape.addVM(vm1);
+		mape.addVM(vm2);
+		mape.addVM(vm3);
+		mape.addKategorija(cat1);
+		mape.addKategorija(cat2);
+		mape.addKategorija(cat3);
+		mape.addDisk(disk1);
+		mape.addDisk(disk2);
+		mape.addDisk(disk3);
+		
+		
 		staticFiles.externalLocation(new File("./static").getCanonicalPath());		
 		
 		post("/rest/login", (req, res) -> {
@@ -101,12 +117,33 @@ public class VMApp {
 		});
 		
 		get("/rest/ucitaj", (req, res) -> {
-			res.type("application/json");
-			Session ss = req.session(true);
-			Korisnik k = ss.attribute("user");			
-			return gson.toJson(izvuciRacuneKorisnika(k));
+			res.type("application/json");	
+			return gson.toJson(mape.izvuciVM());
 		});
 		
+		get("/rest/ucitajOrganizacije", (req, res) -> {
+			System.out.println("Ucitao");
+			res.type("application/json");	
+			String s = gson.toJson(mape.izvuciOrganizacije());
+			System.out.println(s);
+			return s;
+		});
+		
+		get("/rest/ucitajKorisnike", (req, res) -> {
+			res.type("application/json");	
+			return gson.toJson(mape.izvuciKorisnike());
+		});
+		
+		get("/rest/ucitajKategorije", (req, res) -> {
+			res.type("application/json");	
+			return gson.toJson(mape.izvuciKategorije());
+		});
+		
+		get("/rest/ucitajDiskove", (req, res) -> {
+			res.type("application/json");	
+			return gson.toJson(mape.izvuciDiskove());
+		});
+			
 		post("/rest/filter", (req, res) -> {
 			System.out.println("prosao1");
 			 res.type("application/json");
@@ -116,9 +153,10 @@ public class VMApp {
 			 String brojJezgara = params[3].replaceAll("\"", "");
 			 String ram = params[5].replaceAll("\"", "");
 			 String gpu = params[7].replaceAll("\"", "");
-			 String kat = params[9].replaceAll("\"", "");
+			 String kat = params[9].replaceAll("\"|}", "");
 			 if(!ime.equals(""))
 			 {
+				 System.out.println("ime");
 				 for(VirtualnaMasina r : mape.getVmovi().values()) {
 					if(r.getIme().equalsIgnoreCase(ime))
 						virtuelneMasine.add(r);
@@ -126,46 +164,68 @@ public class VMApp {
 			 }
 			 if(!brojJezgara.equals(""))
 			 {
+				 System.out.println("brojJezgara");
 				 int i = Integer.parseInt(brojJezgara);
-				 for(VirtualnaMasina r : mape.getVmovi().values()) {
-					if(r.getBrojJezgara()==i)
-						virtuelneMasine.add(r);
-				}
+				 if(virtuelneMasine.isEmpty()){
+					 for(VirtualnaMasina r : mape.getVmovi().values()) 
+						if(r.getBrojJezgara()==i)
+							virtuelneMasine.add(r);
+					 }
+				 else {
+					 for(VirtualnaMasina r : virtuelneMasine) 
+							if(r.getBrojJezgara()!=i)
+								virtuelneMasine.remove(r);
+				 }
 			 }
 			 if(!ram.equals(""))
 			 {
+				 System.out.println("ram");
+
 				 int i = Integer.parseInt(ram);
-				 for(VirtualnaMasina r : mape.getVmovi().values()) {
-					if(r.getRAM()==i)
-						virtuelneMasine.add(r);
-				}
+				 if(virtuelneMasine.isEmpty()){
+					 for(VirtualnaMasina r : mape.getVmovi().values()) 
+						if(r.getRAM()==i)
+							virtuelneMasine.add(r);
+					 }
+				 else {
+					 for(VirtualnaMasina r : virtuelneMasine) 
+							if(r.getRAM()!=i)
+								virtuelneMasine.remove(r);
+				 }
 			 }
 			 if(!gpu.equals(""))
 			 {
+				 System.out.println("gpu");
+
 				 int i = Integer.parseInt(gpu);
-				 for(VirtualnaMasina r : mape.getVmovi().values()) {
-					if(r.getGPU()==i)
-						virtuelneMasine.add(r);
-				}
+				 if(virtuelneMasine.isEmpty()){
+					 for(VirtualnaMasina r : mape.getVmovi().values()) 
+						if(r.getGPU()==i)
+							virtuelneMasine.add(r);
+				 }
+				 else {
+					 for(VirtualnaMasina r : virtuelneMasine) 
+							if(r.getGPU()!=i)
+								virtuelneMasine.remove(r);
+				 }
+					
 			 }
 			 if(!kat.equals(""))
 			 {
-				 for(VirtualnaMasina r : mape.getVmovi().values()) {
-					if(r.getKategorija().equalsIgnoreCase(kat))
-						virtuelneMasine.add(r);
-				}
+				 System.out.println("kategorija "+ kat);
+
+				 if(virtuelneMasine.isEmpty()){
+					 for(VirtualnaMasina r : mape.getVmovi().values()) 
+						 if(r.getKategorija().equalsIgnoreCase(kat))
+							virtuelneMasine.add(r);
+					 }				
+				 else {
+					 for(VirtualnaMasina r : virtuelneMasine) 
+							if(!r.getKategorija().equalsIgnoreCase(kat))
+								virtuelneMasine.remove(r);
+				 }
 			 }
 			 return gson.toJson(virtuelneMasine);
 		});
-	}
-
-	private static ArrayList<VirtualnaMasina> izvuciRacuneKorisnika(Korisnik k) {
-		ArrayList<VirtualnaMasina> virtuelne = new ArrayList<VirtualnaMasina>();
-		
-		for(VirtualnaMasina r : mape.getVmovi().values()) {
-			virtuelne.add(r);
-		}
-		
-		return virtuelne;
 	}
 }

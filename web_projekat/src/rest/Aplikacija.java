@@ -1,7 +1,10 @@
 package rest;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
+import beans.Disk;
+import beans.Kategorija;
 import beans.Korisnik;
 import beans.Organizacija;
 import beans.Uloga;
@@ -13,7 +16,8 @@ public class Aplikacija {
 	private HashMap<String, Organizacija> organizacije;
 	private HashMap<String, Korisnik> korisnici;
 	private HashMap<String, VirtualnaMasina> vmovi;
-	
+	private HashMap<String, Kategorija> kategorije;
+	private HashMap<String, Disk> diskovi;
 	
 	public Aplikacija(HashMap<String, Organizacija> organizacije, HashMap<String, Korisnik> korisnici,
 			HashMap<String, VirtualnaMasina> vmovi) {
@@ -21,21 +25,33 @@ public class Aplikacija {
 		this.organizacije = organizacije;
 		this.korisnici = korisnici;
 		this.vmovi = vmovi;
+		
 	}
 
 	public Aplikacija() {
 		this.organizacije = new HashMap<String,Organizacija>();
-		this.korisnici = new HashMap<String,Korisnik>()
-				{{
-					put("peraperic@gmail.com",new Korisnik("peraperic@gmail.com","1234", "Pera", "Peric",Uloga.SUPERADMIN));
-				}};
-		this.vmovi =  new HashMap<String,VirtualnaMasina>()
-		{{
-			put("vm1",new VirtualnaMasina("vm1", "Kategorija1", 3, 4, 4, null));
-			put("vm2",new VirtualnaMasina("vm2", "Kategorija3", 5, 7, 1, null));
-		}};;
+		this.korisnici = new HashMap<String,Korisnik>();
+		this.vmovi =  new HashMap<String,VirtualnaMasina>();
+		this.diskovi = new HashMap<String,Disk>();
+		this.kategorije = new HashMap<String,Kategorija>();
 	}
 
+	public HashMap<String, Kategorija> getKategorije() {
+		return kategorije;
+	}
+
+	public void setKategorije(HashMap<String, Kategorija> kategorije) {
+		this.kategorije = kategorije;
+	}
+
+	public HashMap<String, Disk> getDiskovi() {
+		return diskovi;
+	}
+
+	public void setDiskovi(HashMap<String, Disk> diskovi) {
+		this.diskovi = diskovi;
+	}
+	
 	public HashMap<String, Organizacija> getOrganizacije() {
 		return organizacije;
 	}
@@ -71,5 +87,60 @@ public class Aplikacija {
 	
 	public void addVM(VirtualnaMasina v) {
 		this.vmovi.put(v.getIme(), v);
+	}
+	
+	public void addKategorija(Kategorija k) {
+		this.kategorije.put(k.getIme(), k);
+	}
+	
+	public void addDisk(Disk d) {
+		this.diskovi.put(d.getIme(), d);
+	}
+	
+	public ArrayList<Organizacija> izvuciOrganizacije() {
+		ArrayList<Organizacija> virtuelne = new ArrayList<Organizacija>();
+		for(Organizacija r : this.getOrganizacije().values()) {
+			virtuelne.add(r);
+		}
+		return virtuelne;
+	}
+	
+	public ArrayList<Korisnik> izvuciKorisnike() {
+		ArrayList<Korisnik> virtuelne = new ArrayList<Korisnik>();		
+		for(Korisnik r : this.getKorisnici().values()) {
+			virtuelne.add(r);
+		}		
+		return virtuelne;
+	}
+	
+	public ArrayList<VirtualnaMasina> izvuciVM() {
+		ArrayList<VirtualnaMasina> virtuelne = new ArrayList<VirtualnaMasina>();
+		
+		for(VirtualnaMasina r : this.getVmovi().values()) {
+			virtuelne.add(r);
+		}
+		
+		return virtuelne;
+	}
+	
+	
+	public ArrayList<Kategorija> izvuciKategorije() {
+		ArrayList<Kategorija> virtuelne = new ArrayList<Kategorija>();
+		
+		for(Kategorija r : this.getKategorije().values()) {
+			virtuelne.add(r);
+		}
+		
+		return virtuelne;
+	}
+	
+	public ArrayList<Disk> izvuciDiskove() {
+		ArrayList<Disk> virtuelne = new ArrayList<Disk>();
+		
+		for(Disk r : this.getDiskovi().values()) {
+			virtuelne.add(r);
+		}
+		
+		return virtuelne;
 	}
 }
