@@ -6,16 +6,30 @@ public class Korisnik {
 	private String lozinka;
 	private String ime;
 	private String prezime;
-	private Organizacija organizacija;
+	private String organizacija;
+	private Uloga uloga;
 	
 	public Korisnik() {}
 	
-	public Korisnik(String email, String lozinka, String ime, String prezime, Organizacija organizacija) {
+
+	public Korisnik(String email, String lozinka, String ime, String prezime, String organizacija, Uloga uloga) {
+		super();
 		this.email = email;
 		this.lozinka = lozinka;
 		this.ime = ime;
 		this.prezime = prezime;
 		this.organizacija = organizacija;
+		this.uloga = uloga;
+	}
+
+
+	public Korisnik(String email, String lozinka, String ime, String prezime, Uloga uloga) {
+		this.email = email;
+		this.lozinka = lozinka;
+		this.ime = ime;
+		this.prezime = prezime;
+		this.organizacija = null;
+		this.uloga = uloga;
 	}
 
 	public String getEmail() {
@@ -50,15 +64,32 @@ public class Korisnik {
 		this.prezime = prezime;
 	}
 
-	public Organizacija getOrganizacija() {
+	public Uloga getUloga() {
+		return uloga;
+	}
+
+	public void setUloga(Uloga uloga) {
+		this.uloga = uloga;
+	}
+	
+	
+	public String getOrganizacija() {
 		return organizacija;
 	}
 
-	public void setOrganizacija(Organizacija organizacija) {
+	public void setOrganizacija(String organizacija) {
 		this.organizacija = organizacija;
 	}
 	
-	
-	
+	public boolean equals(Object o) {
+		if(o instanceof Korisnik) {
+			Korisnik k = (Korisnik)o;
+			
+			return k.getEmail().equals(email)
+					&& k.getLozinka().equals(lozinka);
+		}
+		
+		return false;
+	}
 	
 }

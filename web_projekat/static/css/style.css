@@ -1,0 +1,42 @@
+#form_holder {
+	margin: 0 auto;
+}
+
+#log_war {
+	border-radius: 25%;
+	border-width: 0px;
+	background-color: #fa8a7f;
+	color: red;
+	display: none;
+	width: 30%;
+	margin: 0 auto;
+	text-align: center;
+}
+
+#homepage {
+	display: none;
+}
+
+.table_cell_space {
+	border-spacing: 8px;
+}
+
+#table_racuni {
+	border-collapse: collapse;
+}
+
+#table_racuni tr,
+#table_racuni th, 
+#table_racuni td {
+	border: 3px ridge;
+}
+
+.message {
+	display: none;
+}
+
+.link {
+	text-decoration: underline;
+	color: blue;
+	cursor: pointer;
+}

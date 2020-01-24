@@ -13,30 +13,33 @@
 		
 		<script>
 			$(document).ready( function() {
-				isLoggedIn();
+				ucitaj();
 			});
 		</script>
 	</head>
-	<body>
-		<form id="login">
-			<table id="form_holder">
-				<tr>
-					<td>Korisničko ime</td>
-				</tr>
-				<tr>
-					<td><input type="text" name="korisnickoIme"/>
-				</tr>
-				<tr>
-					<td>Lozinka</td>
-				</tr>
-				<tr>
-					<td><input type="password" name="lozinka"/>
-				</tr>
-				<tr>
-					<td><input type="button" value="Prijava" onclick="login()" class="btn btn-primary"></td>
-				</tr>
-			</table>
-			<fieldset id="log_war"></fieldset>
-		</form>
+	<body id="homepage">
+		<h2>VM</h2>
+		
+	
+		<table id="tabela_vm" class="table_cell_spacing" border = "1">
+			<thead><tr>
+				<form id = "filter">
+					<th><input type = "text" name = "ime"><input type="button" value=">" onclick="filter()"></th>
+					<th><input type = "text" name = "brojJezgara"><input type="button" value=">" onclick="filter()"></th>
+					<th><input type = "text" name = "ram"><input type="button" value=">" onclick="filter()"></th>
+					<th><input type = "text" name = "gpu"><input type="button" value=">" onclick="filter()"></th>
+					<th><input type = "text" name = "kategorija"><input type="button" value=">" onclick="filter()"></th>
+				</form>
+			</tr>
+			<tr>
+				<th>Ime</th>
+				<th>Broj jezgara</th>
+				<th>RAM</th>
+				<th>GPU</th>
+				<th>Organizacija</th>
+			</tr></thead>
+		</table>
+		<hr>
+		<a href="rest/logout">Odjava</a>
 	</body>
 </html>

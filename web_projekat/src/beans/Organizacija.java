@@ -7,12 +7,12 @@ public class Organizacija {
 	private String ime;
 	private String opis;
 	private String logo;
-	private List<Korisnik> korisnici;
-	private List<VirtualnaMasina> resursi;
+	private List<String> korisnici;
+	private List<String> resursi;
 	
 	public Organizacija() {}
 	
-	public Organizacija(String ime, String opis, String logo, List<Korisnik> korisnici, List<VirtualnaMasina> resursi) {
+	public Organizacija(String ime, String opis, String logo, List<String> korisnici, List<String> resursi) {
 		super();
 		this.ime = ime;
 		this.opis = opis;
@@ -45,19 +45,19 @@ public class Organizacija {
 		this.logo = logo;
 	}
 
-	public List<Korisnik> getKorisnici() {
+	public List<String> getKorisnici() {
 		return korisnici;
 	}
 
-	public void setKorisnici(List<Korisnik> korisnici) {
+	public void setKorisnici(List<String> korisnici) {
 		this.korisnici = korisnici;
 	}
 
-	public List<VirtualnaMasina> getResursi() {
+	public List<String> getResursi() {
 		return resursi;
 	}
 
-	public void setResursi(List<VirtualnaMasina> resursi) {
+	public void setResursi(List<String> resursi) {
 		this.resursi = resursi;
 	}
 	

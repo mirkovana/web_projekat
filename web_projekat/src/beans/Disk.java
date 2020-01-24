@@ -1,16 +1,18 @@
 package beans;
 
+import javax.swing.Spring;
+
 public class Disk {
 
 	private String ime;
-	private enum tipDiska{SSD, HDD}
+	public enum tipDiska{SSD, HDD}
 	private tipDiska tip;
 	private double kapacitet;
-	private VirtualnaMasina vm;
+	private String vm;
 	
 	public Disk() {}
 	
-	public Disk(String ime, tipDiska tip, double kapacitet, VirtualnaMasina vm) {
+	public Disk(String ime, tipDiska tip, double kapacitet, String vm) {
 		super();
 		this.ime = ime;
 		this.tip = tip;
@@ -42,11 +44,11 @@ public class Disk {
 		this.kapacitet = kapacitet;
 	}
 
-	public VirtualnaMasina getVm() {
+	public String getVm() {
 		return vm;
 	}
 
-	public void setVm(VirtualnaMasina vm) {
+	public void setVm(String vm) {
 		this.vm = vm;
 	}
 	
