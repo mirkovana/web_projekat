@@ -9,6 +9,7 @@
 			$(document).ready( function() {
 				$("#pretraga").hide();
 				$("#tabela_ostali_podaci").hide();
+				isLoggedOut();
 			});
 		</script>
 		<style>	
@@ -36,7 +37,7 @@
 			}
 			
 			li input {
-			  background-color: #4CAF50;
+			  background-color: #3282fe;
 			  border: none;
 			  color: white;
 			  padding: 15px 32px;
@@ -79,7 +80,7 @@
 			  <li><input class = "dugme" type = "button" value = "Kategorije" onclick = "ucitajKategorije()"></li>
 			  <li><input class = "dugme" type = "button" value = "Diskovi" onclick = "ucitajDiskove()"></li>
 			  <li></li>
-			  <li class = "odjava"><a href = "index.html"><input type = "button" value = "Odjava"></a></li>
+			  <li class = "odjava"><a href="rest/logout"><input type = "button" value = "Odjava"></a></li>
 			</ul>
 		</div>
 		<div class = "prikaz">

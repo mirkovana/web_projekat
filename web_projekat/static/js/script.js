@@ -444,3 +444,33 @@ function makeTableRow(racun) {
 	
 	return row;
 }
+
+function isLoggedIn() {
+	$.ajax({
+		url: "rest/isLoggedIn",
+		type: "GET",
+		complete: function(data) {
+			d = JSON.parse(data.responseText);
+			if(d.loggedIn) {
+				window.location.replace("/");
+			}
+		}
+	});
+}
+
+function isLoggedOut() {
+	$.ajax({
+		url: "rest/isLoggedIn",
+		type: "GET",
+		complete: function(data) {
+			d = JSON.parse(data.responseText);
+			if(!d.loggedIn) {
+				window.location.replace("/index.html");
+			}
+			else {
+				$("#homepage").show();
+				ucitaj();
+			}
+		}
+	});
+}

@@ -1,0 +1,1 @@
+{"Kategorija1":{"ime":"Kategorija1","brojJezgara":4,"RAM":4,"GPU":2},"Kategorija2":{"ime":"Kategorija2","brojJezgara":8,"RAM":4,"GPU":2},"Kategorija3":{"ime":"Kategorija3","brojJezgara":8,"RAM":8,"GPU":4}}

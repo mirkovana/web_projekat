@@ -3,6 +3,7 @@ package rest;
 import static spark.Spark.get;
 import static spark.Spark.port;
 import static spark.Spark.post;
+import static spark.Spark.after;
 import static spark.Spark.staticFiles;
 
 import java.io.File;
@@ -167,6 +168,37 @@ public class VMApp {
 				 }
 			 }
 			 return gson.toJson(virtuelneMasine);
+		});
+		
+		get("/rest/isLoggedIn", (req, res) -> {
+			res.type("application/json");
+			Session ss = req.session(true);
+			Korisnik k = ss.attribute("user");
+			String loggedIn = "true";
+			if (k == null)
+				loggedIn = "false";
+				
+			return "{\"loggedIn\":" + loggedIn + "}";
+		});
+		
+		get("/rest/logout", (req, res) -> {
+			res.type("application/json");
+			Session ss = req.session(true);
+			Korisnik user = ss.attribute("user");
+			
+			if (user != null) {
+				ss.invalidate();
+			}
+			return "{\"loggedOut\": true}";
+		});
+		
+		after("/rest/logout", (req, res) -> {
+			Session ss = req.session(true);
+			Korisnik user = ss.attribute("user");
+			
+			if (user == null) {
+				res.redirect("/index.html", 301);
+			}
 		});
 	}
 }

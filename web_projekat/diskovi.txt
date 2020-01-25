@@ -1,0 +1,1 @@
+{"Disk4":{"ime":"Disk4","tip":"HDD","kapacitet":1000.0,"vm":"vm3"},"Disk3":{"ime":"Disk3","tip":"HDD","kapacitet":1000.0,"vm":"vm2"},"Disk2":{"ime":"Disk2","tip":"SSD","kapacitet":250.0,"vm":"vm1"},"Disk1":{"ime":"Disk1","tip":"SSD","kapacitet":500.0,"vm":"vm1"}}

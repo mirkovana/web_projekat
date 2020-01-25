@@ -1,0 +1,1 @@
+{"anaanic@gmail.com":{"email":"anaanic@gmail.com","lozinka":"aaa","ime":"Ana","prezime":"Anic","uloga":"ADMIN"},"markomarkovic@gmail.com":{"email":"markomarkovic@gmail.com","lozinka":"bbb","ime":"Marko","prezime":"Markovic","uloga":"KORISNIK"},"peraperic@gmail.com":{"email":"peraperic@gmail.com","lozinka":"1234","ime":"Pera","prezime":"Peric","uloga":"SUPERADMIN"}}

@@ -1,0 +1,1 @@
+{"Org1":{"ime":"Org1","opis":"Opis1","logo":"","korisnici":["peraperic@gmail.com","anaanic@gmail.com"],"resursi":["vm1","vm2"]},"Org2":{"ime":"Org2","opis":"Opis2","logo":"","korisnici":["markomarkovic@gmail.com"],"resursi":["vm3"]}}
