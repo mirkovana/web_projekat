@@ -86,6 +86,7 @@ public class VMApp {
 			
 		post("/rest/filter", (req, res) -> {
 			System.out.println("prosao1");
+			System.out.println(req.body());
 			 res.type("application/json");
 			String[] params = req.body().split(":|\\,");
 			 ArrayList<VirtualnaMasina> virtuelneMasine = new ArrayList<VirtualnaMasina>();

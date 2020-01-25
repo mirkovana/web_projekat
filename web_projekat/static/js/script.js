@@ -37,7 +37,7 @@ function login() {
 }
 
 function filter(){
-	var data = getFormData($("#filter")); 
+	var data = getFormData($("#filter"));
 	var s = JSON.stringify(data); 
 	$.ajax({
 		url: "rest/filter",
@@ -74,13 +74,6 @@ function addRacun() {
 				var selectRacuni = $("select[name=\"racun\"]");
 				table.append(makeTableRow(JSON.parse(racun)));
 				selectRacuni.append(makeSelectOption(JSON.parse(racun)));
-				
-			/*	$(':input','#add_racun')
-				  .not(':button, :submit, :reset, :hidden')
-				  .val('')
-				  .prop('checked', false)
-				  .prop('selected', false);
-				*/
 				$("select[name=\"tipRacuna\"]").val($("select[name=\"tipRacuna\"] option:first").val());
 			}
 		} 
@@ -180,7 +173,7 @@ function pretraga() {
 	  var input, filter, table, tr, td, i, txtValue;
 	  input = document.getElementById("pretraga");
 	  filter = input.value.toUpperCase();
-	  table = document.getElementById("tabela_vm");
+	  table = document.getElementById("tabela_ostali_podaci");
 	  tr = table.getElementsByTagName("tr");
 
 	  // Loop through all table rows, and hide those who don't match the search query
@@ -207,14 +200,17 @@ function ucitajOrganizacije() {
 			organizacije = JSON.parse(data.responseText);
 			console.log(organizacije);			
 			var table = $("#tabela_ostali_podaci");
+			$("#tabela_ostali_podaci").show();
+			$("#tr_forma").hide();
 			$("#tabela_ostali_podaci tbody tr").remove();
-			$("#tabela_ostali_podaci thead tr").remove();
+			$("#brisi").remove();
 			$("button#dodaj").remove();
-			table.append(tableHeader("organizacije"));
+			$("#pretraga").hide();
+			$("#tabela_header").append(tableHeader("organizacije"));
 			for(let o of organizacije) {
 				table.append(makeTableRowIzbor("organizacije",o));
 			}
-			$("body").append("<button id = \"dodaj\" onclick=\"\"><a href = \"dodajOrganizaciju.html\">Dodaj</a></button>");
+			$(".prikaz").append("<br><button id = \"dodaj\" onclick=\"\"><a href = \"dodajOrganizaciju.html\">Dodaj</a></button>");
 			$("#homepage").show();
 		}
 	});
@@ -228,15 +224,18 @@ function ucitajKorisnike() {
 		complete: function(data) {
 			korisnici = JSON.parse(data.responseText);
 			console.log(korisnici);
+			$("#tabela_ostali_podaci").show();
+			$("#tr_forma").hide();
 			var table = $("#tabela_ostali_podaci");
 			$("#tabela_ostali_podaci tbody tr").remove();
-			$("#tabela_ostali_podaci thead tr").remove();
+			$("#brisi").remove();
 			$("button#dodaj").remove();
-			table.append(tableHeader("korisnici"));
+			$("#pretraga").hide();
+			$("#tabela_header").append(tableHeader("korisnici"));
 			for(let k of korisnici) {
 				table.append(makeTableRowIzbor("korisnici",k));
 			}
-			$("body").append("<button id = \"dodaj\" onclick=\"\">Dodaj</button>");
+			$(".prikaz").append("<br><button id = \"dodaj\" onclick=\"\">Dodaj</button>");
 			$("#homepage").show();
 		}
 	});
@@ -249,16 +248,19 @@ function ucitajKategorije() {
 		dataType: "json",
 		complete: function(data) {
 			kategorije = JSON.parse(data.responseText);
-			console.log(kategorije);			
+			console.log(kategorije);	
+			$("#tabela_ostali_podaci").show();
+			$("#tr_forma").hide();
 			var table = $("#tabela_ostali_podaci");
 			$("#tabela_ostali_podaci tbody tr").remove();
-			$("#tabela_ostali_podaci thead tr").remove();
+			$("#brisi").remove();
 			$("button#dodaj").remove();
-			table.append(tableHeader("kategorije"));
+			$("#pretraga").hide();
+			$("#tabela_header").append(tableHeader("kategorije"));
 			for(let k of kategorije) {
 				table.append(makeTableRowIzbor("kategorije",k));
 			}
-			$("body").append("<button id = \"dodaj\" onclick=\"\">Dodaj</button>");
+			$(".prikaz").append("<button id = \"dodaj\" onclick=\"\">Dodaj</button>");
 			$("#homepage").show();
 		}
 	});
@@ -272,11 +274,14 @@ function ucitajDiskove() {
 		complete: function(data) {
 			diskovi = JSON.parse(data.responseText);
 			console.log(diskovi);
+			$("#tabela_ostali_podaci").show();
+			$("#tr_forma").hide();
 			var table = $("#tabela_ostali_podaci");
 			$("#tabela_ostali_podaci tbody tr").remove();
-			$("#tabela_ostali_podaci thead tr").remove();
+			$("#brisi").remove();
 			$("button#dodaj").remove();
-			table.append(tableHeader("diskovi"));
+			$("#pretraga").hide();
+			$("#tabela_header").append(tableHeader("diskovi"));
 			for(let d of diskovi) {
 				table.append(makeTableRowIzbor("diskovi",d));
 			}
@@ -293,6 +298,8 @@ function ucitaj() {
 		dataType: "json",
 		complete: function(data) {
 			virtuelneMasine = JSON.parse(data.responseText);
+			$("#tabela_ostali_podaci").show();
+			$("#tr_forma").show();
 			console.log(virtuelneMasine);
 			loadVM(virtuelneMasine);
 			$("#homepage").show();
@@ -304,47 +311,47 @@ function tableHeader(izbor){
 	var row = "";
 	if(izbor == "organizacije"){
 		row =
-			`<thead class='thead-light'>
-				<tr>
+			`
+				<tr id = 'brisi'>
 					<th>Ime</th>
 					<th>Opis</th>
 					<th>Logo</th>
 				</tr>
-			</thead>`;
+			`;
 	}else if(izbor == "korisnici"){
 		row =
-			`<thead class='thead-light'>
-				<tr>
+			`
+				<tr id = 'brisi'>
 					<th>Email</th>
 					<th>Ime</th>
 					<th>Prezime</th>
 					<th>Naziv organizacije</th>
 				</tr>
-			</thead>`;
+			`;
 	}
 	else if(izbor == "diskovi"){
 		row =
-			`<thead class='thead-light'>
-				<tr>
+			`
+				<tr id = 'brisi'>
 					<th>Naziv diska</th>
 					<th>Kapacitet</th>
 					<th>Naziv vm</th>
 					
 				</tr>
-			</thead>`;
+			`;
 	}
 	
 	else if(izbor == "kategorije"){
 		row =
-			`<thead class='thead-light'>
-				<tr>
+			`
+				<tr id = 'brisi'>
 					<th>Naziv kategorije</th>
 					<th>Broj jezgara</th>
 					<th>Ram</th>
 					<th>Gpu</th>
 					
 				</tr>
-			</thead>`;
+			`;
 	}
 	return row;
 }
@@ -401,8 +408,19 @@ function makeTableRowIzbor(izbor,obj) {
 }
 
 function loadVM(virtuelneMasine) {
-	var table = $("#tabela_vm");
-	$("#tabela_vm tbody tr").remove();
+	var table = $("#tabela_ostali_podaci");
+	$("#tabela_ostali_podaci tbody tr").remove();
+	$("#brisi").remove();
+	$("button#dodaj").remove();
+	$("#pretraga").show();
+	var row = `<tr  id = 'brisi'>
+					<th>Ime</th>
+					<th>Broj jezgara</th>
+					<th>RAM</th>
+					<th>GPU</th>
+					<th>Organizacija</th>
+				</tr>`
+	table.append(row);
 	for(let vm of virtuelneMasine) {
 		table.append(makeTableRow(vm));
 	}
