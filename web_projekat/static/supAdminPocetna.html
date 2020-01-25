@@ -3,54 +3,91 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>Log in</title>
-		<link href="css/style.css" rel="stylesheet">
 		<script src="js/jquery.min.js"></script>
 		<script src="js/script.js"></script>
-		
-		<link rel="stylesheet" href="bootstrap-4.3.1-dist/css/bootstrap.min.css">
-		
-		<script src="bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
-		
 		<script>
 			$(document).ready( function() {
-				ucitaj();
+		
 			});
 		</script>
+		<style>	
+			body {
+				margin : 0;	
+			}	
+			
+			.meni{
+				width: 15%;
+  				float: left;
+  				min-height:100vh;
+  				background-color: #f1f1f1;
+			}
+			
+			.prikaz{
+				padding : 5%;
+				float: left;
+			}
+			
+			ul {
+			  list-style-type: none;
+			  margin: 0;
+			  padding: 0;
+			  overflow: auto;
+			}
+			
+			li input {
+			  background-color: #4CAF50;
+			  border: none;
+			  color: white;
+			  padding: 15px 32px;
+			  text-align: center;
+			  text-decoration: none;
+			  display: inline-block;
+			  font-size: 16px;
+			  width : 100%;
+			}
+			
+			.odjava {
+				bottom : 0;
+				position : absolute;
+				width : 15%;
+			}
+		</style>
 	</head>
 	<body id="homepage">
-		<h2>VM</h2>
-		<br>
-		<input type = "text" placeholder="Pretraga" id = "pretraga" onkeyup="pretraga()">
-		<br>
-		<table id="tabela_vm" class="table_cell_spacing" border = "1">
-			<thead><tr>
-				<form id = "filter">
-					<th><input type = "text" name = "ime"><input type="button" value=">" onclick="filter()"></th>
-					<th><input type = "text" name = "brojJezgara"><input type="button" value=">" onclick="filter()"></th>
-					<th><input type = "text" name = "ram"><input type="button" value=">" onclick="filter()"></th>
-					<th><input type = "text" name = "gpu"><input type="button" value=">" onclick="filter()"></th>
-					<th><input type = "text" name = "kategorija"><input type="button" value=">" onclick="filter()"></th>
-				</form>
-			</tr>
-			<tr>
-				<th>Ime</th>
-				<th>Broj jezgara</th>
-				<th>RAM</th>
-				<th>GPU</th>
-				<th>Organizacija</th>
-			</tr></thead>
-		</table>
-		<hr>
-		<div >
-		  <button onclick = "ucitajOrganizacije()">Organizacije</button>
-		  <button onclick = "ucitajKorisnike()">Korisnici</button>
-		  <button onclick = "ucitajKategorije()">Kategorije</button>
-		  <button onclick = "ucitajDiskove()">Diskovi</button>
+		<div class = "meni">
+			<ul>
+			  <li><input class = "dugme" type = "button" value = "Virtuelne masine" onclick = "ucitaj()"></li>
+			  <li><input class = "dugme" type = "button" value = "Organizacije" onclick = "ucitajOrganizacije()"></li>
+			  <li><input class = "dugme" type = "button" value = "Korisnici" onclick = "ucitajKorisnike()"></li>
+			  <li><input class = "dugme" type = "button" value = "Kategorije" onclick = "ucitajKategorije()"></li>
+			  <li></li>
+			  <li class = "odjava"><a href = "index.html"><input type = "button" value = "Odjava"></a></li>
+			</ul>
 		</div>
-		<br>
-		<table id="tabela_ostali_podaci" class="table_cell_spacing" border = "1">
-		</table>
-		<hr>
-		<a href="index.html">Odjava</a>
+		<div class = "prikaz">
+			<input type = "text" placeholder="Pretraga" id = "pretraga" onkeyup="pretraga()">
+			<br>
+			<table id="tabela_vm" class="table_cell_spacing" border = "1">
+				<thead><tr>
+					<form id = "filter">
+						<th><input type = "text" name = "ime"><input type="button" value=">" onclick="filter()"></th>
+						<th><input type = "text" name = "brojJezgara"><input type="button" value=">" onclick="filter()"></th>
+						<th><input type = "text" name = "ram"><input type="button" value=">" onclick="filter()"></th>
+						<th><input type = "text" name = "gpu"><input type="button" value=">" onclick="filter()"></th>
+						<th><input type = "text" name = "kategorija"><input type="button" value=">" onclick="filter()"></th>
+					</form>
+				</tr>
+				<tr>
+					<th>Ime</th>
+					<th>Broj jezgara</th>
+					<th>RAM</th>
+					<th>GPU</th>
+					<th>Organizacija</th>
+				</tr></thead>
+			</table>
+			<table id="tabela_ostali_podaci" class="table_cell_spacing" border = "1">
+			</table>
+			<hr>
+		</div>
 	</body>
 </html>
