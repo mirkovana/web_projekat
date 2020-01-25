@@ -1,119 +1,59 @@
 package rest;
 
+import static spark.Spark.get;
 import static spark.Spark.port;
 import static spark.Spark.post;
-import static spark.Spark.get;
 import static spark.Spark.staticFiles;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.google.gson.Gson;
 
-import beans.Disk;
-import beans.Disk.tipDiska;
-import beans.Kategorija;
 import beans.Korisnik;
-import beans.Organizacija;
-import beans.Uloga;
 import beans.VirtualnaMasina;
+import json.GenerisanjeJSONa;
 import spark.Session;
 
 public class VMApp {
 	
-	private static Gson gson = new Gson();
+	private static Gson gson = new Gson();	
 	
-	private static Aplikacija mape = new Aplikacija();
+	private static GenerisanjeJSONa xml ;
+	private static Aplikacija mape;
 	
-	static Kategorija cat1 = new Kategorija("Kategorija1", 4, 4, 2);
-	static Kategorija cat2 = new Kategorija("Kategorija2", 8, 4, 2);
-	static Kategorija cat3 = new Kategorija("Kategorija3", 8, 8, 4);
-	private ArrayList<Kategorija> kategorije = new ArrayList<Kategorija>() {{
-		add(cat1);
-		add(cat2);
-		add(cat3);
-	}};
-	private static Disk disk1 = new Disk("Disk1", tipDiska.SSD, 500, "vm1");
-	private static Disk disk2 = new Disk("Disk2", tipDiska.SSD, 250, "vm1");
-	private static Disk disk3 = new Disk("Disk3", tipDiska.HDD, 1000, "vm2");
-	
-	private static ArrayList<String> diskovi1 = new ArrayList<String>() {{
-		add("Disk1");
-		add("Disk2");
-	}};
-	private static ArrayList<String> diskovi2 = new ArrayList<String>() {{
-		add("Disk3");
-	}};
-	
-	static VirtualnaMasina vm1 = new VirtualnaMasina("vm1", "Kategorija1", cat1.getBrojJezgara(), cat1.getRAM(), cat1.getGPU(),
-			diskovi1);
-	static VirtualnaMasina vm2 = new VirtualnaMasina("vm2", "Kategorija2", cat2.getBrojJezgara(), cat2.getRAM(), cat2.getGPU(),
-			diskovi1);
-	static VirtualnaMasina vm3 = new VirtualnaMasina("vm3", "Kategorija3", cat3.getBrojJezgara(), cat3.getRAM(), cat3.getGPU(),
-			diskovi2);
-	private static ArrayList<String> vme = new ArrayList<String>() {{
-		add("vm1");
-		add("vm2");
-		add("vm3");
-	}};
-	
-	
-	private static Korisnik Korisnik1 = new Korisnik("peraperic@gmail.com","1234", "Pera", "Peric",Uloga.SUPERADMIN);
-	private static Korisnik Korisnik2 = new Korisnik("anaanic@gmail.com","aaa","Ana", "Anic","Org2" , Uloga.ADMIN);
-	private static Korisnik Korisnik3 = new Korisnik("markomarkovic@gmail.com","bbb","Marko", "Markovic","Org2" , Uloga.KORISNIK);
-	
-	private static ArrayList<String> korisnici1 = new ArrayList<String>() {{
-		add("peraperic@gmail.com");
-	}};
-	
-	private static ArrayList<String> korisnici2 = new ArrayList<String>() {{
-		add("anaanic@gmail.com");
-		add("markomarkovic@gmail.com");
-	}};
-		
-	private static Organizacija org1 = new Organizacija("Org1", "Opis1", "", korisnici1, vme);
-	private static Organizacija org2 = new Organizacija("Org2", "Opis2", "", korisnici2, vme);
 
 	public static void main(String[] args) throws Exception {
 		
+		//prvo mora da se napravi objekat klase GenerisanjeXMLa da bi se izgenerisali fajlovi na osnovu kreiranih objekata
+		//u konstruktoru klase Aplikacija poziva se private f-ja koja ce ucitati izgenerisane fajlove
+		xml = new GenerisanjeJSONa();
+		mape = new Aplikacija();
 		port(8080);
-		
-		mape.addOrganizacija(org1);
-		mape.addOrganizacija(org2);
-		mape.addKorisnik(Korisnik1);
-		mape.addKorisnik(Korisnik2);
-		mape.addKorisnik(Korisnik3);
-		mape.addVM(vm1);
-		mape.addVM(vm2);
-		mape.addVM(vm3);
-		mape.addKategorija(cat1);
-		mape.addKategorija(cat2);
-		mape.addKategorija(cat3);
-		mape.addDisk(disk1);
-		mape.addDisk(disk2);
-		mape.addDisk(disk3);
-		
-		
-		staticFiles.externalLocation(new File("./static").getCanonicalPath());		
+			
+		staticFiles.externalLocation(new File("./static").getCanonicalPath());
 		
 		post("/rest/login", (req, res) -> {
 			 res.type("application/json");
 			 Korisnik k = gson.fromJson(req.body(), Korisnik.class);
 			 Session ss = req.session(true);
 			 Korisnik korisnikSession = ss.attribute("user");
-			 String message = "false";
+			 HashMap<String, String> returnMess = new HashMap<String, String>();
+			 returnMess.put("message", "false");
 			 if(korisnikSession == null) {
 				 if(mape.getKorisnici().containsKey(k.getEmail())) {
-					 if(mape.getKorisnici().get(k.getEmail()).equals(k)) {
+					 Korisnik izMape = mape.getKorisnici().get(k.getEmail());
+					 if(izMape.equals(k)) {
 						korisnikSession = mape.getKorisnici().get(k.getEmail());
 						ss.attribute("user", korisnikSession);
-						message = "true";
+						returnMess.replace("message", "true");
+						returnMess.put("uloga", izMape.getUloga().toString().toLowerCase());
+						System.out.println(returnMess.toString());
 					}
 				 }
 			 }
-			 
-			 return "{\"message\": " + message + "}";
+			 return gson.toJson(returnMess);
 		});
 		
 		get("/rest/ucitaj", (req, res) -> {

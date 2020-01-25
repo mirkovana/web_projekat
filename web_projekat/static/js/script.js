@@ -26,7 +26,11 @@ function login() {
 				$("#log_war").show(); 
 			}
 			else {
-				window.location.replace("/login.html");
+				var str1 = d.uloga;
+				var str2 = "superadmin";
+				var n = str1.localeCompare(str2);
+				if(n>-1)
+					window.location.replace("/supAdminPocetna.html");
 			}
 		} 
 	});
@@ -374,8 +378,7 @@ function makeTableRowIzbor(izbor,obj) {
 			    <tr>
 					<td class='align-middle'><span class="link" onclick="">${obj.ime}</span></td>
 					<td class='align-middle'>${obj.kapacitet}</td>
-					<td class='align-middle'>${obj.vm}</td>
-					
+					<td class='align-middle'>${obj.vm}</td>					
 			   </tr>
 			   </tbody>`;
 		

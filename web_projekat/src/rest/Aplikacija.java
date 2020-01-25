@@ -1,7 +1,13 @@
 package rest;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Scanner;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import beans.Disk;
 import beans.Kategorija;
@@ -18,22 +24,13 @@ public class Aplikacija {
 	private HashMap<String, VirtualnaMasina> vmovi;
 	private HashMap<String, Kategorija> kategorije;
 	private HashMap<String, Disk> diskovi;
-	
-	public Aplikacija(HashMap<String, Organizacija> organizacije, HashMap<String, Korisnik> korisnici,
-			HashMap<String, VirtualnaMasina> vmovi) {
-		super();
-		this.organizacije = organizacije;
-		this.korisnici = korisnici;
-		this.vmovi = vmovi;
-		
-	}
 
 	public Aplikacija() {
-		this.organizacije = new HashMap<String,Organizacija>();
-		this.korisnici = new HashMap<String,Korisnik>();
-		this.vmovi =  new HashMap<String,VirtualnaMasina>();
-		this.diskovi = new HashMap<String,Disk>();
-		this.kategorije = new HashMap<String,Kategorija>();
+		ucitajListe(Organizacija.class, "organizacije.txt");
+		ucitajListe(Korisnik.class, "korisnici.txt");
+		ucitajListe(VirtualnaMasina.class, "vmasine.txt");
+		ucitajListe(Kategorija.class, "kategorije.txt");
+		ucitajListe(Disk.class, "diskovi.txt");
 	}
 
 	public HashMap<String, Kategorija> getKategorije() {
@@ -76,25 +73,29 @@ public class Aplikacija {
 		this.vmovi = vmovi;
 	}
 
-	public void addKorisnik(Korisnik k)
-	{
-		this.korisnici.put(k.getEmail(), k);
-	}
-	
-	public void addOrganizacija(Organizacija o) {
-		this.organizacije.put(o.getIme(), o);
-	}
-	
-	public void addVM(VirtualnaMasina v) {
-		this.vmovi.put(v.getIme(), v);
-	}
-	
-	public void addKategorija(Kategorija k) {
-		this.kategorije.put(k.getIme(), k);
-	}
-	
-	public void addDisk(Disk d) {
-		this.diskovi.put(d.getIme(), d);
+	private void ucitajListe(Class<?> cls, String path) {
+		Gson gson = new Gson();
+		try {
+	      File myObj = new File(path);
+	      Scanner myReader = new Scanner(myObj);
+	      String data = "";
+	      while (myReader.hasNextLine())
+	        data += myReader.nextLine();
+	      if (cls == Organizacija.class)
+	    	  organizacije = gson.fromJson(data, new TypeToken<HashMap<String, Organizacija>>(){}.getType()); 
+	      if (cls == Disk.class)
+	    	  diskovi = gson.fromJson(data, new TypeToken<HashMap<String, Disk>>(){}.getType()); 
+	      if (cls == Kategorija.class)
+	    	  kategorije = gson.fromJson(data, new TypeToken<HashMap<String, Kategorija>>(){}.getType()); 
+	      if (cls == Korisnik.class)
+	    	  korisnici = gson.fromJson(data, new TypeToken<HashMap<String, Korisnik>>(){}.getType()); 
+	      if (cls == VirtualnaMasina.class)
+	    	  vmovi = gson.fromJson(data, new TypeToken<HashMap<String, VirtualnaMasina>>(){}.getType()); 
+	      myReader.close();
+	    } catch (FileNotFoundException e) {
+	      System.out.println("An error occurred.");
+	      e.printStackTrace();
+	    }
 	}
 	
 	public ArrayList<Organizacija> izvuciOrganizacije() {
@@ -105,10 +106,21 @@ public class Aplikacija {
 		return virtuelne;
 	}
 	
-	public ArrayList<Korisnik> izvuciKorisnike() {
-		ArrayList<Korisnik> virtuelne = new ArrayList<Korisnik>();		
+	public ArrayList<HashMap<String,String>> izvuciKorisnike() {
+		ArrayList<HashMap<String,String>> virtuelne = new ArrayList<HashMap<String,String>>();		
 		for(Korisnik r : this.getKorisnici().values()) {
-			virtuelne.add(r);
+			HashMap<String, String> k = new HashMap<String, String>();
+			k.put("email", r.getEmail());
+			k.put("ime", r.getIme());
+			k.put("prezime", r.getPrezime());
+			String orgKor = "";
+			for(Organizacija org:this.organizacije.values())
+			{
+				if(org.getKorisnici().contains(r.getEmail()))
+					orgKor += org.getIme()+" ";
+			}
+			k.put("organizacija", orgKor);
+			virtuelne.add(k);
 		}		
 		return virtuelne;
 	}
@@ -117,9 +129,14 @@ public class Aplikacija {
 		ArrayList<VirtualnaMasina> virtuelne = new ArrayList<VirtualnaMasina>();
 		
 		for(VirtualnaMasina r : this.getVmovi().values()) {
-			virtuelne.add(r);
-		}
-		
+			VirtualnaMasina vm = new VirtualnaMasina(r);
+			for(Organizacija org : this.getOrganizacije().values())
+			{
+				if(org.getResursi().contains(r.getIme()))
+					vm.setKategorija(vm.getKategorija()+org.getIme()+" ");
+			}
+			virtuelne.add(vm);
+		}		
 		return virtuelne;
 	}
 	
@@ -134,7 +151,7 @@ public class Aplikacija {
 		return virtuelne;
 	}
 	
-	public ArrayList<Disk> izvuciDiskove() {
+	public ArrayList<Disk> izvuciDiskove() {		
 		ArrayList<Disk> virtuelne = new ArrayList<Disk>();
 		
 		for(Disk r : this.getDiskovi().values()) {
