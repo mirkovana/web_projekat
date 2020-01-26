@@ -210,7 +210,7 @@ function ucitajOrganizacije() {
 			for(let o of organizacije) {
 				table.append(makeTableRowIzbor("organizacije",o));
 			}
-			$(".prikaz").append("<br><button id = \"dodaj\" onclick=\"\"><a href = \"dodajOrganizaciju.html\">Dodaj</a></button>");
+			$(".prikaz").append("<br><button id = \"dodaj\" onclick=\"\" ><a href = \"dodajOrganizaciju.html\">Dodaj</a></button>");
 			$("#homepage").show();
 		}
 	});
@@ -474,3 +474,5 @@ function isLoggedOut() {
 		}
 	});
 }
+
+

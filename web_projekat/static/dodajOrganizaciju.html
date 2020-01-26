@@ -2,9 +2,52 @@
 <html>
 <head>
 
-<title>Insert title here</title>
+<title>Dodavanje organizacije</title>
+<script src="js/jquery.min.js"></script>
+		<script src="js/script.js"></script>
+		<link href="css/style.css" rel="stylesheet">
+		<link rel="stylesheet" href="bootstrap-4.3.1-dist/css/bootstrap.min.css">
+		<script src="bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
+		<script>
+			$(document).ready( function() {
+
+			});
+		</script>
+		
 </head>
 <body>
-dodaj organizaciju
+<form id="dodajOrganizaciju">
+	<table id="form_holder">
+		
+		<tr>
+			<td>
+				<label for="exampleInputEmail1">Ime</label> 
+			</td>
+			<td>
+				<input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter name" name="name" required>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label for="exampleInputPassword1">Opis</label> 
+			</td>
+			<td>
+				<input type="text" class="form-control" id="exampleInputPassword1" placeholder="Enter description" name="opis" required>
+			</td>
+		</tr>
+		<tr>
+		    <td><label for="exampleInputPassword1">Logo</label></td>
+		    <td>
+		        <input type="file" name="inpFile" id="inpFile" value="Odaberi" onclick="fsdhetdodajLogo()" class="btn btn-primary">
+		       
+		    </td>
+		</tr>	
+		<tr>
+		 <td align="center"><input type="button" value="Primeni" onclick="sdgfdhlogin()" class="btn btn-primary"></td>
+		</tr>
+	
+	</table>
+	<fieldset id="log_war"></fieldset>
+	</form>
 </body>
 </html>
