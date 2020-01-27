@@ -77,21 +77,23 @@ public class VMApp {
 		});
 		
 		get("/rest/ucitaj", (req, res) -> {
-			res.type("application/json");	
-			return gson.toJson(mape.izvuciVM());
+			res.type("application/json");
+			Session ss = req.session(true);
+			Korisnik korisnikSession = ss.attribute("user");
+			return gson.toJson(mape.izvuciVM(korisnikSession));
 		});
 		
 		get("/rest/ucitajOrganizacije", (req, res) -> {
-			System.out.println("Ucitao");
 			res.type("application/json");	
 			String s = gson.toJson(mape.izvuciOrganizacije());
-			System.out.println(s);
 			return s;
 		});
 		
 		get("/rest/ucitajKorisnike", (req, res) -> {
 			res.type("application/json");	
-			return gson.toJson(mape.izvuciKorisnike());
+			Session ss = req.session(true);
+			Korisnik korisnikSession = ss.attribute("user");
+			return gson.toJson(mape.izvuciKorisnike(korisnikSession));
 		});
 		
 		get("/rest/ucitajKategorije", (req, res) -> {
@@ -101,7 +103,9 @@ public class VMApp {
 		
 		get("/rest/ucitajDiskove", (req, res) -> {
 			res.type("application/json");	
-			return gson.toJson(mape.izvuciDiskove());
+			Session ss = req.session(true);
+			Korisnik korisnikSession = ss.attribute("user");
+			return gson.toJson(mape.izvuciDiskove(korisnikSession));
 		});
 			
 		post("/rest/filter", (req, res) -> {
