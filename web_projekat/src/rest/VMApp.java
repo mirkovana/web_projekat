@@ -4,7 +4,9 @@ import static spark.Spark.get;
 import static spark.Spark.port;
 import static spark.Spark.post;
 import static spark.Spark.after;
+import static spark.Spark.before;
 import static spark.Spark.staticFiles;
+import static spark.Spark.halt;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -13,9 +15,11 @@ import java.util.HashMap;
 import com.google.gson.Gson;
 
 import beans.Korisnik;
+import beans.Organizacija;
 import beans.VirtualnaMasina;
 import json.GenerisanjeJSONa;
 import spark.Session;
+import rest.Aplikacija;
 
 public class VMApp {
 	
@@ -42,8 +46,21 @@ public class VMApp {
 			 Korisnik korisnikSession = ss.attribute("user");
 			 HashMap<String, String> returnMess = new HashMap<String, String>();
 			 returnMess.put("message", "false");
-			 if(korisnikSession == null) {
+			 returnMess.put("prazan", "");
+			 String prazan = "";
+		     if(korisnikSession == null) {
+				 System.out.println("mail"+k.getEmail());
+				 System.out.println("pass"+k.getLozinka());
+				 if(k.getEmail().isEmpty()) {
+					 prazan+="email";
+					 System.out.println("prrrrrrrazno");
+					 //neka ret mess ne znam da l true ili false
+				 }
+				 if(k.getLozinka().isEmpty()) {
+					 prazan += "lozinka"; 
+			     }
 				 if(mape.getKorisnici().containsKey(k.getEmail())) {
+			    	 System.out.println("else if");
 					 Korisnik izMape = mape.getKorisnici().get(k.getEmail());
 					 if(izMape.equals(k)) {
 						korisnikSession = mape.getKorisnici().get(k.getEmail());
@@ -54,6 +71,8 @@ public class VMApp {
 					}
 				 }
 			 }
+		     System.out.println(returnMess.get("prazan"));
+			 returnMess.replace("prazan", prazan);
 			 return gson.toJson(returnMess);
 		});
 		
@@ -199,6 +218,34 @@ public class VMApp {
 			if (user == null) {
 				res.redirect("/index.html", 301);
 			}
+		});
+		
+		before("/rest/addOrganizacija", (req, res) -> {
+			Session ss = req.session(true);
+			Korisnik user = ss.attribute("user");
+			
+			if (user == null) {
+				halt(403, "<h2>403 <br>Unauthorized operation</h2>");
+			}
+		});
+		
+		post("/rest/addOrganizacija", (req, res) -> {
+			res.type("application/json");
+			Organizacija o = gson.fromJson(req.body(), Organizacija.class);
+			Session ss = req.session(true);
+			Korisnik k = ss.attribute("user");
+			String msg = "false";
+			//Aplikacija a = new Aplikacija();
+			//Aplikacija a; ne moze
+			
+			if(!mape.getOrganizacije().containsKey(o.getIme())) {
+				//k.addRacun(o.getIme());
+				mape.getOrganizacije().put(o.getIme(), o);
+				msg = "true";
+			}
+			//for(var org in a.getOrganizacije()) {}
+			System.out.println("Organizacije i dodata" + mape.getOrganizacije());
+			return "{\"added\": " + msg + "}";
 		});
 	}
 }

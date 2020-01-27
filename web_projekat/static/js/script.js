@@ -20,12 +20,26 @@ function login() {
 		dataType: "json",
 		complete : function (data) {
 			d = JSON.parse(data.responseText); 
-			console.log(d.message);
-			if(!d.message) {
-				$("#log_war").text("Pogrešan email ili lozinka!");
-				$("#log_war").show(); 
+			//console.log(d.message);
+			var n = d.prazan;
+			if(n.localeCompare("emaillozinka")==0){
+				$("#log_war_email").text("Unos email adrese je obavezan!").css('color', 'red');
+				$("#log_war_email").show(); 
+				$("#log_war_pass").text("Unos lozinke je obavezan!");
+				$("#log_war_pass").css('color', 'red')
+				$("#log_war_pass").show(); 				
+			}else if(n.localeCompare("email")==0){
+				$("#log_war_email").text("Unos email adrese je obavezan!").css('color', 'red');
+				$("#log_war_email").show(); 
+			}else if(n.localeCompare("lozinka")==0){
+				$("#log_war_pass").text("Unos lozinke je obavezan!");
+				$("#log_war_pass").css('color', 'red')
+				$("#log_war_pass").show();  
+			}else if(d.message.localeCompare("false")==0) {
+				$("#log_war").text("Neispravan email ili lozinka!");
+				$("#log_war").show();				
 			}
-			else {
+			else {				
 				var str1 = d.uloga;
 				var str2 = "superadmin";
 				var n = str1.localeCompare(str2);
@@ -54,14 +68,11 @@ function filter(){
 	});
 }
 
-function addRacun() {
-	var data = getFormData($("#add_racun"));
-	data.aktivan = "true";
-	data.tipRacuna = data.tipRacuna.toUpperCase();
-	console.log(data);
+function addOrganizacija() {
+	var data = getFormData($("#prikaz")); //ili dic class="prikaz" NIJE DOBRO OVO SA tabela_ostali_podaci
 	var racun = JSON.stringify(data);
 	$.ajax({
-		url: "rest/addRacun",
+		url: "rest/addOrganizacija",
 		type: "POST",
 		data: racun,
 		contentType: "application/json",
@@ -70,11 +81,12 @@ function addRacun() {
 			d = JSON.parse(data.responseText);
 			
 			if(d.added) {
-				var table = $("#table_racuni");
-				var selectRacuni = $("select[name=\"racun\"]");
+				var table = $("#tabela_ostali_podaci");
+				//var selectRacuni = $("select[name=\"racun\"]");
 				table.append(makeTableRow(JSON.parse(racun)));
-				selectRacuni.append(makeSelectOption(JSON.parse(racun)));
-				$("select[name=\"tipRacuna\"]").val($("select[name=\"tipRacuna\"] option:first").val());
+				//selectRacuni.append(makeSelectOption(JSON.parse(racun)));
+				//$("select[name=\"tipRacuna\"]").val($("select[name=\"tipRacuna\"] option:first").val());
+				window.location.replace("/supAdminPocetna.html");
 			}
 		} 
 	});
@@ -210,7 +222,7 @@ function ucitajOrganizacije() {
 			for(let o of organizacije) {
 				table.append(makeTableRowIzbor("organizacije",o));
 			}
-			$(".prikaz").append("<br><button id = \"dodaj\" onclick=\"\" ><a href = \"dodajOrganizaciju.html\">Dodaj</a></button>");
+			$(".prikaz").append("<br><button id = \"dodaj\" onclick=\"\" ><a href = \"dodajOrganizaciju.html\" class=\"btn btn-primary\">Dodaj</a></button>");
 			$("#homepage").show();
 		}
 	});
@@ -235,7 +247,7 @@ function ucitajKorisnike() {
 			for(let k of korisnici) {
 				table.append(makeTableRowIzbor("korisnici",k));
 			}
-			$(".prikaz").append("<br><button id = \"dodaj\" onclick=\"\">Dodaj</button>");
+			$(".prikaz").append("<br><button id = \"dodaj\" onclick=\"\"><a href = \"dodajKorisnika.html\" class=\"btn btn-primary\">Dodaj</a></button>");
 			$("#homepage").show();
 		}
 	});

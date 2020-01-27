@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Dodavanje korisnika</title>
+        <script src="js/jquery.min.js"></script>
+		<script src="js/script.js"></script>
+		<link href="css/style.css" rel="stylesheet">
+		<link rel="stylesheet" href="bootstrap-4.3.1-dist/css/bootstrap.min.css">
+		<script src="bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
+		<script>
+			$(document).ready( function() {
+
+			});
+		</script>
+
+</head>
+<body>
+<form id="dodajOrganizaciju">
+	<table id="form_holder">
+		
+		<tr>
+			<td>
+				<label for="exampleInputEmail1">Ime</label> 
+			</td>
+			<td>
+				<input type="text" class="form-control" id="ime" aria-describedby="emailHelp" placeholder="Enter name" name="name" required>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label for="exampleInputPassword1">Prezime</label> 
+			</td>
+			<td>
+				<input type="text" class="form-control" id="prezime" placeholder="Enter surname" name="prezime" required>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label for="exampleInputEmail1">Email adresa</label> 
+			</td>
+			<td>
+				<input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email" name="email" required>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label for="exampleInputPassword1">Lozinka</label> 
+			</td>
+			<td>
+				<input type="password" class="form-control" id="exampleInputPassword1" placeholder="Enter password" name="lozinka" required>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label for="exampleInputEmail1">Organizacija</label> 
+			</td>
+			<td>
+				<input type="text" class="form-control" id="organizacija" aria-describedby="emailHelp" placeholder="Enter organization" name="organizacija" required>
+			</td>
+		</tr>	
+		<tr>
+		 <td align="center"><input type="button" value="Primeni" onclick="uhjbaddOrganizacija()" class="btn btn-primary"></td>
+		</tr>
+	
+	</table>
+	<fieldset id="log_war"></fieldset>
+	</form>
+</body>
+</html>

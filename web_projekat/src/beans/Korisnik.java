@@ -92,4 +92,12 @@ public class Korisnik {
 		return false;
 	}
 	
+	/*public boolean hasOrganizacija(String ime) {
+		return Aplikacija.cl.contains(ime);
+	}
+	
+	public void addRacun(String ime) {
+		racuni.add(ime);
+	}*/
+	
 }
