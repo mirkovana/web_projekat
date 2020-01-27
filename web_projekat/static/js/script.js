@@ -1,3 +1,4 @@
+var korisnikUloga = "";
 function getFormData($form) { //ucitava sa svake forme u bilo kom .html fajlu
 	var unindexedArray = $form.serializeArray();
 	var indexedArray = {}
@@ -41,6 +42,7 @@ function login() {
 			}
 			else {				
 				korisnikUloga = d.uloga;
+				console.log(korisnikUloga);
 				if(korisnikUloga.localeCompare("superadmin")==0)
 					window.location.replace("/supAdminPocetna.html");
 				else if(korisnikUloga.localeCompare("admin")==0)
@@ -71,7 +73,9 @@ function filter(){
 }
 
 function addOrganizacija() {
-	var data = getFormData($("#prikaz")); //ili dic class="prikaz" NIJE DOBRO OVO SA tabela_ostali_podaci
+	var data = getFormData($("#dodajOrganizaciju")); //ili dic class="prikaz" NIJE DOBRO OVO SA tabela_ostali_podaci
+	var filePath=$('#inputFile').val();
+	data['logo'] = filePath;
 	var racun = JSON.stringify(data);
 	$.ajax({
 		url: "rest/addOrganizacija",
@@ -80,17 +84,27 @@ function addOrganizacija() {
 		contentType: "application/json",
 		dataType: "json",
 		complete : function (data) {
-			d = JSON.parse(data.responseText);
-			
+			d = JSON.parse(data.responseText);			
 			if(d.added) {
-				var table = $("#tabela_ostali_podaci");
-				//var selectRacuni = $("select[name=\"racun\"]");
-				table.append(makeTableRow(JSON.parse(racun)));
-				//selectRacuni.append(makeSelectOption(JSON.parse(racun)));
-				//$("select[name=\"tipRacuna\"]").val($("select[name=\"tipRacuna\"] option:first").val());
-				window.location.replace("/supAdminPocetna.html");
+				if(d.uloga.localeCompare("superadmin")==0)
+					window.location.replace("/supAdminPocetna.html");
+				else
+					window.location.replace("/adminPocetna.html");
 			}
 		} 
+	});
+}
+
+function proveriUlogovanog(){
+	$.ajax({
+		url: "rest/ucitajOrganizacije",
+		type: "GET",
+		complete: function(data) {
+			d = JSON.parse(data.responseText);
+			console.log(d);
+			document.getElementById("inputIme").value = d.ime;
+			document.getElementById("inputOpis").value = d.opis;
+		}
 	});
 }
 
@@ -182,6 +196,10 @@ function isLoggedOut() {
 	});
 }
 
+function izmenaOrganizacije(){
+	window.location.replace("/dodajOrganizaciju.html");
+}
+
 function pretraga() {
 	  // Declare variables
 	  var input, filter, table, tr, td, i, txtValue;
@@ -224,11 +242,13 @@ function ucitajOrganizacije() {
 			for(let o of organizacije) {
 				table.append(makeTableRowIzbor("organizacije",o));
 			}
+			console.log(korisnikUloga);
 			$(".prikaz").append("<br><button id = \"dodaj\" onclick=\"\" ><a href = \"dodajOrganizaciju.html\" class=\"btn btn-primary\">Dodaj</a></button>");
 			$("#homepage").show();
 		}
 	});
 }
+
 function ucitajKorisnike() {
 	$.ajax({
 		url: "rest/ucitajKorisnike",

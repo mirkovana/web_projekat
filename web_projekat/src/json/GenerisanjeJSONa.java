@@ -54,7 +54,6 @@ public class GenerisanjeJSONa {
 		Organizacija org1 = new Organizacija("Org1", "Opis1", "");
 		Organizacija org2 = new Organizacija("Org2", "Opis2", "");
 		
-		org1.dodajKorisnika(Korisnik1);
 		org1.dodajKorisnika(Korisnik2);
 		org1.dodajVM(vm1);
 		org1.dodajVM(vm2);

@@ -60,4 +60,9 @@ public class Organizacija {
 	public void dodajVM(VirtualnaMasina vm) {
 		this.resursi.add(vm.getIme());
 	}
+
+	@Override
+	public String toString() {
+		return "Organizacija [ime=" + ime + ", opis=" + opis + ", logo=" + logo + "]";
+	}
 }

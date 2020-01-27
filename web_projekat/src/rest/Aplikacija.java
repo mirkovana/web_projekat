@@ -107,6 +107,22 @@ public class Aplikacija {
 		return virtuelne;
 	}
 	
+	public HashMap<String, String> izvOrg(Korisnik korisnik)
+	{
+		HashMap<String, String> retMap = new HashMap<String, String>();
+		for(Organizacija org : this.getOrganizacije().values())
+		{
+			if(org.getKorisnici()!=null)
+				if(org.getKorisnici().contains(korisnik.getEmail()))
+				{
+					retMap.put("ime", org.getIme());
+					retMap.put("opis", org.getOpis());
+					break;
+				}
+		}
+		return retMap;
+	}
+	
 	public ArrayList<HashMap<String,String>> izvuciKorisnike(Korisnik kor) {
 		ArrayList<HashMap<String,String>> virtuelne = new ArrayList<HashMap<String,String>>();		
 		if(kor.getUloga().equals(Uloga.SUPERADMIN))
@@ -118,8 +134,9 @@ public class Aplikacija {
 				String orgKor = "";
 				for(Organizacija org:this.organizacije.values())
 				{
-					if(org.getKorisnici().contains(r.getEmail()))
-						orgKor += org.getIme()+" ";
+					if(org.getKorisnici()!=null)
+						if(org.getKorisnici().contains(r.getEmail()))
+							orgKor += org.getIme()+" ";
 				}
 				k.put("organizacija", orgKor);
 				virtuelne.add(k);
@@ -129,11 +146,13 @@ public class Aplikacija {
 			String org = "";
 			for(Organizacija o : this.organizacije.values())
 			{
-				if(o.getKorisnici().contains(kor.getEmail()))
-				{
-					org = o.getIme();
-					orgKor = o.getKorisnici();
-				}
+				if(o.getKorisnici()!=null)
+					if(o.getKorisnici().contains(kor.getEmail()))
+					{
+						org = o.getIme();
+						orgKor = o.getKorisnici();
+						break;
+					}
 			}
 			for(Korisnik r : this.getKorisnici().values()) 
 				if(orgKor.contains(r.getEmail())){
@@ -155,8 +174,9 @@ public class Aplikacija {
 				VirtualnaMasina vm = new VirtualnaMasina(r);
 				for(Organizacija org : this.getOrganizacije().values())
 				{
-					if(org.getResursi().contains(r.getIme()))
-						vm.setKategorija(vm.getKategorija()+org.getIme()+" ");
+					if(org.getKorisnici()!=null)
+						if(org.getResursi().contains(r.getIme()))
+							vm.setKategorija(vm.getKategorija()+org.getIme()+" ");
 				}
 				virtuelne.add(vm);
 			}
@@ -164,11 +184,12 @@ public class Aplikacija {
 			List<String> vmLista = new ArrayList<String>() ;
 			String orgIme = "";
 			for(Organizacija org : this.getOrganizacije().values())
-				if(org.getKorisnici().contains(k.getEmail())) {
-					vmLista = org.getResursi();
-					orgIme = org.getIme();
-					break;
-				}
+				if(org.getKorisnici()!=null)
+					if(org.getKorisnici().contains(k.getEmail())) {
+						vmLista = org.getResursi();
+						orgIme = org.getIme();
+						break;
+					}
 			for(VirtualnaMasina r : this.getVmovi().values()) {
 				VirtualnaMasina vm = new VirtualnaMasina(r);
 				if(vmLista.contains(vm.getIme())){
@@ -202,11 +223,12 @@ public class Aplikacija {
 			List<String> vmLista = new ArrayList<String>() ;
 			String orgIme = "";
 			for(Organizacija org : this.getOrganizacije().values())
-				if(org.getKorisnici().contains(k.getEmail())) {
-					vmLista = org.getResursi();
-					orgIme = org.getIme();
-					break;
-				}
+				if(org.getKorisnici()!=null)
+					if(org.getKorisnici().contains(k.getEmail())) {
+						vmLista = org.getResursi();
+						orgIme = org.getIme();
+						break;
+					}
 			for(VirtualnaMasina r : this.getVmovi().values()) {
 				if(vmLista.contains(r.getIme())){
 					for(String d : r.getDiskovi())

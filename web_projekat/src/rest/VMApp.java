@@ -16,6 +16,7 @@ import com.google.gson.Gson;
 
 import beans.Korisnik;
 import beans.Organizacija;
+import beans.Uloga;
 import beans.VirtualnaMasina;
 import json.GenerisanjeJSONa;
 import spark.Session;
@@ -85,7 +86,14 @@ public class VMApp {
 		
 		get("/rest/ucitajOrganizacije", (req, res) -> {
 			res.type("application/json");	
-			String s = gson.toJson(mape.izvuciOrganizacije());
+			Session ss = req.session(true);
+			Korisnik korisnikSession = ss.attribute("user");
+			String s;
+			System.out.println(korisnikSession.getUloga());
+			if(korisnikSession.getUloga().equals(Uloga.SUPERADMIN))
+				s = gson.toJson(mape.izvuciOrganizacije());
+			else
+				s = gson.toJson(mape.izvOrg(korisnikSession));
 			return s;
 		});
 		
@@ -238,18 +246,47 @@ public class VMApp {
 			Organizacija o = gson.fromJson(req.body(), Organizacija.class);
 			Session ss = req.session(true);
 			Korisnik k = ss.attribute("user");
-			String msg = "false";
-			//Aplikacija a = new Aplikacija();
-			//Aplikacija a; ne moze
-			
-			if(!mape.getOrganizacije().containsKey(o.getIme())) {
-				//k.addRacun(o.getIme());
-				mape.getOrganizacije().put(o.getIme(), o);
-				msg = "true";
+			HashMap<String, String> returnMess = new HashMap<String, String>();
+			 returnMess.put("added", "false");
+			 returnMess.put("uloga", k.getUloga().toString().toLowerCase());
+			System.out.println("Uloga korisnika : " +k.getUloga());
+			if(k.getUloga().equals(Uloga.SUPERADMIN))
+			{
+				if(o.getIme()==null || o.getOpis()==null || o.getLogo()==null)
+					{
+						System.out.println(req.body());
+						System.out.println(o.getIme());
+						return gson.toJson(returnMess);		
+					}
+				if(!mape.getOrganizacije().containsKey(o.getIme())) {
+					//k.addRacun(o.getIme());
+					System.out.println("Nije nasao organizaciju");
+					mape.getOrganizacije().put(o.getIme(), o);
+					returnMess.replace("added", "true");				
+				}
+				return gson.toJson(returnMess);	
 			}
-			//for(var org in a.getOrganizacije()) {}
-			System.out.println("Organizacije i dodata" + mape.getOrganizacije());
-			return "{\"added\": " + msg + "}";
+			else
+			{
+				String orgIme="";
+				Organizacija novaOrg=null;
+				for(Organizacija org : mape.getOrganizacije().values())
+				{
+					if(org.getKorisnici().contains(k.getEmail()))
+					{
+						orgIme = org.getIme();
+						if(o.getIme()!= null)org.setIme(o.getIme());
+						if(o.getOpis()!= null)org.setOpis(o.getOpis());
+						if(o.getLogo()!= null)org.setLogo(o.getLogo());
+						novaOrg = org;
+					}
+					break;
+				}
+				mape.getOrganizacije().remove(orgIme);
+				mape.getOrganizacije().put(novaOrg.getIme(), novaOrg);
+				returnMess.replace("added", "true");
+				return gson.toJson(returnMess);
+			}
 		});
 	}
 }
