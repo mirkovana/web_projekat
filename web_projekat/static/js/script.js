@@ -36,7 +36,7 @@ function login() {
 				$("#log_war_pass").css('color', 'red')
 				$("#log_war_pass").show();  
 			}else if(d.message.localeCompare("false")==0) {
-				$("#log_war").text("Neispravan email ili lozinka!");
+				$("#log_war").text("Neispravan email ili lozinka.");
 				$("#log_war").show();				
 			}
 			else {				
