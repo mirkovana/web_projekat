@@ -40,13 +40,11 @@ function login() {
 				$("#log_war").show();				
 			}
 			else {				
-				korisnikUloga = d.uloga;
-				if(korisnikUloga.localeCompare("superadmin")==0)
+				var str1 = d.uloga;
+				var str2 = "superadmin";
+				var n = str1.localeCompare(str2);
+				if(n>-1)
 					window.location.replace("/supAdminPocetna.html");
-				else if(korisnikUloga.localeCompare("admin")==0)
-					window.location.replace("/adminPocetna.html");
-				else
-					window.location.replace("/korisnikPOcetna.html");
 			}
 		} 
 	});
