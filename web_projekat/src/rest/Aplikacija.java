@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Scanner;
 
 import com.google.gson.Gson;
@@ -106,37 +107,76 @@ public class Aplikacija {
 		return virtuelne;
 	}
 	
-	public ArrayList<HashMap<String,String>> izvuciKorisnike() {
+	public ArrayList<HashMap<String,String>> izvuciKorisnike(Korisnik kor) {
 		ArrayList<HashMap<String,String>> virtuelne = new ArrayList<HashMap<String,String>>();		
-		for(Korisnik r : this.getKorisnici().values()) {
-			HashMap<String, String> k = new HashMap<String, String>();
-			k.put("email", r.getEmail());
-			k.put("ime", r.getIme());
-			k.put("prezime", r.getPrezime());
-			String orgKor = "";
-			for(Organizacija org:this.organizacije.values())
+		if(kor.getUloga().equals(Uloga.SUPERADMIN))
+			for(Korisnik r : this.getKorisnici().values()) {
+				HashMap<String, String> k = new HashMap<String, String>();
+				k.put("email", r.getEmail());
+				k.put("ime", r.getIme());
+				k.put("prezime", r.getPrezime());
+				String orgKor = "";
+				for(Organizacija org:this.organizacije.values())
+				{
+					if(org.getKorisnici().contains(r.getEmail()))
+						orgKor += org.getIme()+" ";
+				}
+				k.put("organizacija", orgKor);
+				virtuelne.add(k);
+			}	
+		else {
+			List<String> orgKor = new ArrayList<String>();
+			String org = "";
+			for(Organizacija o : this.organizacije.values())
 			{
-				if(org.getKorisnici().contains(r.getEmail()))
-					orgKor += org.getIme()+" ";
+				if(o.getKorisnici().contains(kor.getEmail()))
+				{
+					org = o.getIme();
+					orgKor = o.getKorisnici();
+				}
 			}
-			k.put("organizacija", orgKor);
-			virtuelne.add(k);
-		}		
+			for(Korisnik r : this.getKorisnici().values()) 
+				if(orgKor.contains(r.getEmail())){
+					HashMap<String, String> k = new HashMap<String, String>();
+					k.put("email", r.getEmail());
+					k.put("ime", r.getIme());
+					k.put("prezime", r.getPrezime());
+					k.put("organizacija", org);
+					virtuelne.add(k);
+				}
+		}
 		return virtuelne;
 	}
 	
-	public ArrayList<VirtualnaMasina> izvuciVM() {
+	public ArrayList<VirtualnaMasina> izvuciVM(Korisnik k) {
 		ArrayList<VirtualnaMasina> virtuelne = new ArrayList<VirtualnaMasina>();
-		
-		for(VirtualnaMasina r : this.getVmovi().values()) {
-			VirtualnaMasina vm = new VirtualnaMasina(r);
-			for(Organizacija org : this.getOrganizacije().values())
-			{
-				if(org.getResursi().contains(r.getIme()))
-					vm.setKategorija(vm.getKategorija()+org.getIme()+" ");
+		if(k.getUloga().equals(Uloga.SUPERADMIN))
+			for(VirtualnaMasina r : this.getVmovi().values()) {
+				VirtualnaMasina vm = new VirtualnaMasina(r);
+				for(Organizacija org : this.getOrganizacije().values())
+				{
+					if(org.getResursi().contains(r.getIme()))
+						vm.setKategorija(vm.getKategorija()+org.getIme()+" ");
+				}
+				virtuelne.add(vm);
 			}
-			virtuelne.add(vm);
-		}		
+		else {
+			List<String> vmLista = new ArrayList<String>() ;
+			String orgIme = "";
+			for(Organizacija org : this.getOrganizacije().values())
+				if(org.getKorisnici().contains(k.getEmail())) {
+					vmLista = org.getResursi();
+					orgIme = org.getIme();
+					break;
+				}
+			for(VirtualnaMasina r : this.getVmovi().values()) {
+				VirtualnaMasina vm = new VirtualnaMasina(r);
+				if(vmLista.contains(vm.getIme())){
+					vm.setKategorija(vm.getKategorija()+orgIme);
+					virtuelne.add(vm);
+				}
+			}
+		}
 		return virtuelne;
 	}
 	
@@ -151,11 +191,30 @@ public class Aplikacija {
 		return virtuelne;
 	}
 	
-	public ArrayList<Disk> izvuciDiskove() {		
-		ArrayList<Disk> virtuelne = new ArrayList<Disk>();
+	public ArrayList<Disk> izvuciDiskove(Korisnik k) {		
+		ArrayList<Disk> virtuelne = new ArrayList<Disk>();		
 		
-		for(Disk r : this.getDiskovi().values()) {
-			virtuelne.add(r);
+		if(k.getUloga().equals(Uloga.SUPERADMIN))
+			for(Disk r : this.getDiskovi().values()) {
+				virtuelne.add(r);
+			}
+		else {
+			List<String> vmLista = new ArrayList<String>() ;
+			String orgIme = "";
+			for(Organizacija org : this.getOrganizacije().values())
+				if(org.getKorisnici().contains(k.getEmail())) {
+					vmLista = org.getResursi();
+					orgIme = org.getIme();
+					break;
+				}
+			for(VirtualnaMasina r : this.getVmovi().values()) {
+				if(vmLista.contains(r.getIme())){
+					for(String d : r.getDiskovi())
+					{
+						virtuelne.add(this.getDiskovi().get(d));
+					}
+				}
+			}
 		}
 		
 		return virtuelne;
