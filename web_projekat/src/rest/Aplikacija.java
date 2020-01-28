@@ -241,4 +241,22 @@ public class Aplikacija {
 		
 		return virtuelne;
 	}
+
+	public void updateKorisnik(Korisnik stari, Korisnik novi) {
+		this.korisnici.remove(stari.getEmail());
+		this.korisnici.put(novi.getEmail(), novi);
+		if(novi.getUloga().equals(Uloga.SUPERADMIN))
+			return;
+		for(Organizacija org : this.organizacije.values())
+		{
+			if(org.getKorisnici()!=null)
+			{
+				if(org.getKorisnici().contains(stari.getEmail()))
+				{
+					org.getKorisnici().remove(stari.getEmail());
+					org.getKorisnici().add(novi.getEmail());
+				}
+			}
+		}
+	}
 }

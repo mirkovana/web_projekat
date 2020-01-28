@@ -21,7 +21,15 @@ public class Korisnik {
 		this.organizacija = organizacija;
 		this.uloga = uloga;
 	}
-
+	
+	public Korisnik(Korisnik k) {
+		this.email = k.email;
+		this.lozinka = k.lozinka;
+		this.ime = k.ime;
+		this.prezime = k.prezime;
+		this.organizacija = k.organizacija;
+		this.uloga = k.uloga;
+	}
 
 	public Korisnik(String email, String lozinka, String ime, String prezime, Uloga uloga) {
 		this.email = email;

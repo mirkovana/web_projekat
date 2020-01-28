@@ -288,5 +288,49 @@ public class VMApp {
 				return gson.toJson(returnMess);
 			}
 		});
+		
+		get("/rest/getUlogovan", (req, res) -> {
+			Session ss = req.session(true);
+			Korisnik k = ss.attribute("user");
+			return gson.toJson(k);
+		});
+		
+		post("/rest/izmeni", (req, res) -> {
+			res.type("application/json");
+			HashMap<String, String> izmene = gson.fromJson(req.body(), HashMap.class);
+			Session ss = req.session(true);
+			System.out.println(req.body());
+			Korisnik k = ss.attribute("user");
+			Korisnik stari = mape.getKorisnici().get(k.getEmail());
+			Korisnik novi = new Korisnik(stari);
+			String email = izmene.get("email"), ime = izmene.get("ime"), pre = izmene.get("prezime");
+			String loz = izmene.get("pass"), loz2 = izmene.get("pass2");
+			int ind=1; // 0 korisnik postoji; -1 lozinka nije uneta; -2 lozinke se ne poklapaju
+			if(!email.equals(""))
+			{
+				if(mape.getKorisnici().containsKey(email))
+					ind = 0;
+				else
+					novi.setEmail(email);
+			}
+			if(!ime.equals(""))
+				novi.setIme(ime);
+			if(!pre.equals(""))
+				novi.setPrezime(pre);
+			if(!loz.equals("") && !loz2.equals(""))
+				if(loz.equals(loz2))
+					novi.setLozinka(loz);
+				else
+					ind = -2;
+			else if(!loz.equals("") && loz2.equals("")) ind = -1;
+			if(ind == 1) {
+				mape.updateKorisnik(stari,novi);
+				ss.attribute("user", novi);
+			}
+			izmene.clear();
+			izmene.put("uloga", k.getUloga().toString().toLowerCase());
+			izmene.put("izmena", String.valueOf(ind));
+			return gson.toJson(izmene);
+		});
 	}
 }

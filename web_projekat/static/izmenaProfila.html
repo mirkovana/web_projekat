@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Izmena</title>
+	<script src="js/jquery.min.js"></script>
+	<script src="js/script2.js"></script>
+	<link href="css/style.css" rel="stylesheet">
+	<link rel="stylesheet" href="bootstrap-4.3.1-dist/css/bootstrap.min.css">
+	<script>
+		$(document).ready( function() {
+			getUlogovan();
+		});
+	</script>
+</head>
+<body>
+	<form id="izmenaPodataka">
+		<table id="form_holder">
+			<tr>
+				<td>
+					<h4>Izmena podataka</h4>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label for="exampleInputEmail1">Ime</label> 
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<input type="text" class="form-control" id="ime" placeholder = "" name = "ime">
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label for="exampleInputEmail1">Prezime</label> 
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<input type="text" class="form-control" id="prezime" placeholder = "" name = "prezime">
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label for="exampleInputEmail1">Email adresa</label> 
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<input type="email" class="form-control" id="email" placeholder = "" name = "email">
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label for="exampleInputPassword1">Lozinka</label> 
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<input type="password" class="form-control" id="lozinka" placeholder = "" name = "pass">
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label for="exampleInputPassword1">Potvrdite lozinku</label> 
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<input type="password" class="form-control" id="lozinka2" name = "pass2">
+					<fieldset id="log_war_pass"></fieldset>
+				</td>
+			</tr>
+			<tr>
+			<td><input type="button" value="Izmeni" onclick="izmeni()" class="btn btn-primary"></td>
+			</tr>
+			<tr>
+			<fieldset id="log_war_mess"></fieldset>
+			</tr>		
+		</table>
+	</form>
+</body>
+</html>

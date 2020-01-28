@@ -4,13 +4,13 @@
 
 <title>Dodavanje korisnika</title>
         <script src="js/jquery.min.js"></script>
-		<script src="js/script.js"></script>
+		<script src="js/script2.js"></script>
 		<link href="css/style.css" rel="stylesheet">
 		<link rel="stylesheet" href="bootstrap-4.3.1-dist/css/bootstrap.min.css">
 		<script src="bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
 		<script>
 			$(document).ready( function() {
-
+				getUlogovanDodavanje();
 			});
 		</script>
 
@@ -51,18 +51,28 @@
 				<input type="password" class="form-control" id="exampleInputPassword1" placeholder="Enter password" name="lozinka" required>
 			</td>
 		</tr>
-		<tr>
+		<tr id = "organizacija">
 			<td>
 				<label for="exampleInputEmail1">Organizacija</label> 
 			</td>
 			<td>
-				<input type="text" class="form-control" id="organizacija" aria-describedby="emailHelp" placeholder="Enter organization" name="organizacija" required>
+				<select id = "orgSelect">
+				  
+				</select>
 			</td>
 		</tr>	
 		<tr>
-		 <td align="center"><input type="button" value="Primeni" onclick="uhjbaddOrganizacija()" class="btn btn-primary"></td>
+			<td>
+				<label for="exampleInputPassword1">Uloga</label> 
+			</td>
+			<td>
+				<input type="radio" name="uloga" value="admin"> admin
+				<input type="radio" name="uloga" value="korisnik"> korisnik
+			</td>
 		</tr>
-	
+		<tr>
+		 <td align="center"><input type="button" value="Dodaj" onclick="uhjbaddOrganizacija()" class="btn btn-primary"></td>
+		</tr>	
 	</table>
 	<fieldset id="log_war"></fieldset>
 	</form>
