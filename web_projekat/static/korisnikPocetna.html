@@ -94,6 +94,17 @@
 					</form>
 				</tr>
 				</thead>
+			</table>
+			<table id="tabela_ostali_podaci_diskovi">
+				<thead id = "tabela_header_diskovi">
+					<tr id = "tr_forma_diskovi">
+					<form id = 'filter_diskovi'>
+						<th><input type = 'text' name = 'ime_diska'><input type="button" value=">" onclick='filterDiskovi()'></th>
+						<th><input type = 'text' name = 'kapacitet'><input type='button' value='>' onclick='filterDiskovi()'></th>
+						<th><input type = 'text' name = 'naziv_vm'><input type='button' value='>' onclick='filterDiskovi()'></th>
+					</form>
+				</tr>
+				</thead>
 			</table>			
 		</div>
 	</body>

@@ -52,7 +52,10 @@ public class Disk {
 		this.vm = vm;
 	}
 	
-	
+	@Override
+	public String toString() {
+		return "Disk [ime=" + ime + ", kapacitet=" + kapacitet + ", vm=" + vm + "]";
+	}
 	
 	
 }

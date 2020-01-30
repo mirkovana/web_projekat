@@ -81,7 +81,7 @@
 			  <li><input class = "dugme" type = "button" value = "Organizacije" onclick = "ucitajOrganizacije()"></li>
 			  <li><input class = "dugme" type = "button" value = "Korisnici" onclick = "ucitajKorisnike()"></li>
 			  <li><input class = "dugme" type = "button" value = "Kategorije" onclick = "ucitajKategorije()"></li>
-			  <li><input class = "dugme" type = "button" value = "Diskovi" onclick = "ucitajDiskove()"></li>
+			  <li><input class = "dugme" type = "button" value = "Diskovi" onclick = " getUlogovan('ucitaj')"></li>
 			  <li><a href="izmenaProfila.html"><input type = "button" value = "Moj profil"></a></li>
 			  <li class = "odjava"><a href="rest/logout"><input type = "button" value = "Odjava"></a></li>
 			</ul>
@@ -97,6 +97,13 @@
 						<th><input type = 'text' name = 'ram'><input type='button' value='>' onclick='filter()'></th>
 						<th><input type = 'text' name = 'gpu'><input type='button' value='>' onclick='filter()'></th>
 						<th><input type = 'text' name = 'kategorija'><input type='button' value='>' onclick='filter()'></th>
+					</form>
+				</tr>
+				<tr id = "tr_forma_diskovi">
+					<form id = 'filter_diskovi'>
+						<th><input type = 'text' name = 'ime_diska'><input type="button" value=">" onclick="getUlogovan('nesto')"></th>
+						<th><input type = 'text' name = 'kapacitet'><input type='button' value='>' onclick="getUlogovan('nest')"></th>
+						<th><input type = 'text' name = 'naziv_vm'><input type='button' value='>' onclick="getUlogovan('nesto')"></th>
 					</form>
 				</tr>
 				</thead>

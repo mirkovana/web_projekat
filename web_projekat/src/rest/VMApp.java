@@ -18,6 +18,8 @@ import beans.Korisnik;
 import beans.Organizacija;
 import beans.Uloga;
 import beans.VirtualnaMasina;
+import beans.Disk;
+import beans.Kategorija;
 import json.GenerisanjeJSONa;
 import spark.Session;
 import rest.Aplikacija;
@@ -113,7 +115,20 @@ public class VMApp {
 			res.type("application/json");	
 			Session ss = req.session(true);
 			Korisnik korisnikSession = ss.attribute("user");
+			/*String s;
+			if(korisnikSession.getUloga().equals(Uloga.SUPERADMIN))
+				s = gson.toJson(mape.izvuciOrganizacije());
+			else
+				s = gson.toJson(mape.izvOrg(korisnikSession));
+			return s;*/
+			System.out.println(gson.toJson(mape.izvuciDiskove(korisnikSession)));
 			return gson.toJson(mape.izvuciDiskove(korisnikSession));
+		});
+		
+		get("/rest/ucitajDiskove22", (req, res) -> {
+			res.type("application/json");	
+			
+			return gson.toJson(mape.getDiskovi().values());
 		});
 			
 		post("/rest/filter", (req, res) -> {
@@ -331,6 +346,202 @@ public class VMApp {
 			izmene.put("uloga", k.getUloga().toString().toLowerCase());
 			izmene.put("izmena", String.valueOf(ind));
 			return gson.toJson(izmene);
+		});
+		
+		post("/rest/filterDiskovi", (req, res) -> {
+			System.out.println("prosao1");
+			System.out.println(req.body());
+			 res.type("application/json");
+			 Session ss = req.session(true);
+			Korisnik k = ss.attribute("user");
+			ArrayList<Disk> ucitaniDiskovi;
+			if(k.getUloga().equals(Uloga.KORISNIK))
+				ucitaniDiskovi = mape.izvuciDiskove(k);
+			else
+				ucitaniDiskovi = new ArrayList<Disk>(mape.getDiskovi().values());
+			String[] params = req.body().split(":|\\,");
+			ArrayList<Disk> diskovii = new ArrayList<Disk>();
+			String ime = params[1].replaceAll("\"", "");
+			String kapacitet = params[3].replaceAll("\"", "");
+			String vm = params[5].replaceAll("\"|}", "");
+			 //vm = vm.replace("}", "");
+		
+			 if(!ime.equals(""))
+			 {
+				 System.out.println("ime");
+				 for(Disk d : ucitaniDiskovi) {
+					if(d.getIme().equalsIgnoreCase(ime))
+						diskovii.add(d);
+				}
+			 }
+			 if(!kapacitet.equals(""))
+			 {
+				 System.out.println("kapacitet");
+				 double i = Double.parseDouble(kapacitet);
+				 if(diskovii.isEmpty()){
+					 for(Disk d : ucitaniDiskovi) 
+						if(d.getKapacitet()==i)
+							diskovii.add(d);
+					 }
+				 else {
+					 for(Disk d : diskovii) 
+						 if(d.getKapacitet() != i) {
+							 diskovii.remove(d);
+						 }
+				 }
+			 }
+			 if(!vm.equals(""))
+			 {
+				 if(diskovii.isEmpty()){
+					 System.out.println("diskovi u listi na ulazu " + diskovii.toString());
+					 for(Disk d : ucitaniDiskovi) {
+						 System.out.println("posle fora vm " + d.getVm());
+							if(d.getVm().equalsIgnoreCase(vm)) { //mora to -1 jer vita vm1} ??
+								diskovii.add(d);
+							}
+					  }
+				 }else {
+					 for(Disk d : diskovii) 
+						 if(!d.getVm().equalsIgnoreCase(vm)) {
+							 diskovii.remove(d);
+						 }
+				 }
+			 }
+			 System.out.println("diskovi: ");
+			 for(Disk d : diskovii) {
+				 System.out.println(d.toString());
+			 }
+			 return gson.toJson(diskovii);
+		});
+		
+		before("/rest/addDisk", (req, res) -> {
+			Session ss = req.session(true);
+			Korisnik user = ss.attribute("user");
+			
+			if (user == null) {
+				halt(403, "<h2>403 <br>Unauthorized operation</h2>");
+			}
+		});
+		
+		post("/rest/addDisk", (req, res) -> {
+			res.type("application/json");
+			Disk d = gson.fromJson(req.body(), Disk.class);
+			Session ss = req.session(true);
+			Korisnik k = ss.attribute("user");
+			HashMap<String, String> returnMess = new HashMap<String, String>();
+			 returnMess.put("added", "false");
+			 returnMess.put("uloga", k.getUloga().toString().toLowerCase());
+			System.out.println("Uloga korisnika : " +k.getUloga());
+			if(k.getUloga().equals(Uloga.SUPERADMIN) || k.getUloga().equals(Uloga.ADMIN))
+			{
+				System.out.println("req.body pre ifa "+req.body());
+				
+				
+				if(d.getIme()==null || d.getKapacitet()==0.0d || d.getVm()==null)
+					{
+						System.out.println("req.body iz add disk vma "+req.body());
+						System.out.println("disk ime iz add disk vma "+d.getIme());
+						System.out.println("disk kapacitet iz add disk vma "+d.getKapacitet());
+						System.out.println("disk vm iz add disk vma "+d.getVm());
+						return gson.toJson(returnMess);		
+					}
+				if(!mape.getDiskovi().containsKey(d.getIme())) {
+					//k.addRacun(o.getIme());
+					System.out.println("Nije nasao disk");
+					mape.getDiskovi().put(d.getIme(), d);
+					returnMess.replace("added", "true");				
+				}
+				return gson.toJson(returnMess);	
+			}
+			else
+			{
+				String disIme="";
+				Disk noviDis=null;
+				for(Disk dis : mape.getDiskovi().values())
+				{
+					disIme = dis.getIme();
+					if(d.getIme()!= null)dis.setIme(d.getIme());
+					if(d.getKapacitet()!= 0.0d)dis.setKapacitet(d.getKapacitet());
+					if(d.getVm()!= null)dis.setVm(d.getVm());
+					noviDis = dis;
+					
+					break;
+				}
+				mape.getDiskovi().remove(disIme);
+				mape.getDiskovi().put(noviDis.getIme(), noviDis);
+				returnMess.replace("added", "true");
+				return gson.toJson(returnMess);
+			}
+		});
+		
+		before("/rest/obrisiDisk", (req, res) -> {
+			Session ss = req.session(true);
+			Korisnik user = ss.attribute("user");
+			
+			if (user == null) {
+				halt(403, "<h2>403 <br>Unauthorized operation</h2>");
+			}
+		});
+		
+		post("/rest/obrisiDisk", (req, res) -> {
+			res.type("application/json");
+			Session ss = req.session(true);
+			Korisnik k = ss.attribute("user");
+			String ime = req.queryParams("ime");
+			String msg = "false";
+			
+			if(mape.getDiskovi().containsKey(ime)) {
+				//k.deleteRacun(brRacuna);
+				mape.getDiskovi().remove(ime);
+				msg = "true";
+			}
+			
+			return "{\"good\": " + msg + "}";
+		});
+		
+		before("/rest/addKategorija", (req, res) -> {
+			Session ss = req.session(true);
+			Korisnik user = ss.attribute("user");
+			
+			if (user == null) {
+				halt(403, "<h2>403 <br>Unauthorized operation</h2>");
+			}
+		});
+		
+		post("/rest/addKategorija", (req, res) -> {
+			res.type("application/json");
+			Kategorija d = gson.fromJson(req.body(), Kategorija.class);
+			Session ss = req.session(true);
+			Korisnik k = ss.attribute("user");
+			HashMap<String, String> returnMess = new HashMap<String, String>();
+			 returnMess.put("added", "false");
+			 returnMess.put("uloga", k.getUloga().toString().toLowerCase());
+			System.out.println("Uloga korisnika : " +k.getUloga());
+			if(k.getUloga().equals(Uloga.SUPERADMIN))
+			{
+				System.out.println("req.body pre ifa "+req.body());
+				
+				
+				if(d.getIme()==null || d.getBrojJezgara()==0 || d.getRAM()==0 || d.getGPU()==0)
+					{
+						System.out.println("req.body iz add disk vma "+req.body());
+						return gson.toJson(returnMess);		
+					}
+				if(!mape.getKategorije().containsKey(d.getIme())) {
+					//k.addRacun(o.getIme());
+					System.out.println("Nije nasao disk");
+					mape.getKategorije().put(d.getIme(), d);
+					returnMess.replace("added", "true");				
+				}
+				return gson.toJson(returnMess);	
+			}
+			return gson.toJson(returnMess);	
+		});
+		
+		get("/rest/getUlogovan", (req, res) -> {
+			Session ss = req.session(true);
+			Korisnik k = ss.attribute("user");
+			return gson.toJson(k);
 		});
 	}
 }

@@ -1,7 +1,7 @@
 var korisnikUloga = "";
 function getFormData($form) { //ucitava sa svake forme u bilo kom .html fajlu
 	var unindexedArray = $form.serializeArray();
-	var indexedArray = {}
+	var indexedArray = {};
 	
 	$.map(unindexedArray, function(n, i){
 		indexedArray[n['name']] = n['value'];
@@ -48,10 +48,29 @@ function login() {
 				else if(korisnikUloga.localeCompare("admin")==0)
 					window.location.replace("/adminPocetna.html");
 				else
-					window.location.replace("/korisnikPOcetna.html");
+					window.location.replace("/korisnikPocetna.html");
 			}
 		} 
 	});
+}
+
+function getUlogovan(fja){
+	var ul;
+	$.ajax({
+		url: "rest/getUlogovan",
+		type: "GET",
+		contentType: "application/json",
+		complete : function (data) {
+			d = JSON.parse(data.responseText); 
+			console.log("ULOGA" + d.uloga);
+			ul = d.uloga;
+			if(fja.localeCompare("ucitaj")==0)
+				ucitajDiskove(ul);
+			else
+				filterDiskovi(ul);
+		} 
+	});
+	
 }
 
 function filter(){
@@ -108,6 +127,59 @@ function proveriUlogovanog(){
 	});
 }
 
+function proveriUlogovanogDisk(disk){
+	$.ajax({
+		url: "rest/ucitajDiskove22",
+		type: "GET",
+		contentType: "application/json",
+		complete: function(data) {
+			d = JSON.parse(data.responseText);
+			for(let o of d) {
+				if(o.ime.localeCompare(disk)===0){
+					console.log("popunjavanje polja iz skrpta za izmenu diska "+o+" kraj");
+					document.getElementById("ime").value = o.ime;
+					$("tip").val(o.tipDiska);
+					//document.getElementById("tip").value = podaci.tip;
+					document.getElementById("kapacitet").value = o.kapacitet;
+					document.getElementById("nazivVM").value = o.vm;
+					break;
+				}
+			}
+			
+		}
+	});
+}
+
+function proveriUlogovanogKategorija(){
+	$.ajax({
+		url: "rest/ucitajKategorije",
+		type: "GET",
+		complete: function(data) {
+			d = JSON.parse(data.responseText);
+			console.log("popunjavanje polja iz skrpta za izmenu diska "+d+" kraj");
+            var podaci = d[0];
+			document.getElementById("ime").value = podaci.ime;
+			document.getElementById("brojJezgara").value = podaci.brojJezgara;
+			document.getElementById("RAM").value = podaci.RAM;
+			document.getElementById("GPU").value = podaci.GPU;
+		}
+	});
+}
+
+function proveriUlogovanogDiskDodavanje(){
+	$.ajax({
+		url: "rest/ucitajDiskove",
+		type: "GET",
+		complete: function(data) {
+			d = JSON.parse(data.responseText);
+			console.log("popunjavanje polja iz skrpta za izmenu diska "+d+" kraj");
+            var podaci = d[0];
+			
+			document.getElementById("nazivVM").value = podaci.vm;
+		}
+	});
+}
+
 function uplati() {
 	var data = getFormData($("#uplata"));
 	var uplataRacun = JSON.stringify(data);
@@ -141,6 +213,23 @@ function obrisi(brojRacuna) {
 				    return $(this).text() == brojRacuna;
 				}).closest("tr").remove();
 				$("option[value='" + brojRacuna + "']").remove();
+			}
+		} 
+	});
+}
+
+function obrisiDisk(ime) {
+	$.ajax({
+		url: "rest/obrisiDisk?ime=" + ime,
+		type: "POST",
+		complete : function (data) {
+			d = JSON.parse(data.responseText);
+			console.log(d);
+			if(d.good) {
+				$("td").filter(function() {
+				    return $(this).text() == ime;
+				}).closest("tr").remove();
+				$("id='" + ime + "'").remove();
 			}
 		} 
 	});
@@ -233,6 +322,7 @@ function ucitajOrganizacije() {
 			console.log(organizacije);			
 			var table = $("#tabela_ostali_podaci");
 			$("#tabela_ostali_podaci").show();
+			$("#tr_forma_diskovi").hide();
 			$("#tr_forma").hide();
 			$("#tabela_ostali_podaci tbody tr").remove();
 			$("#brisi").remove();
@@ -260,6 +350,7 @@ function ucitajKorisnike() {
 			console.log(korisnici);
 			$("#tabela_ostali_podaci").show();
 			$("#tr_forma").hide();
+			$("#tr_forma_diskovi").hide();
 			var table = $("#tabela_ostali_podaci");
 			$("#tabela_ostali_podaci tbody tr").remove();
 			$("#brisi").remove();
@@ -285,21 +376,24 @@ function ucitajKategorije() {
 			console.log(kategorije);	
 			$("#tabela_ostali_podaci").show();
 			$("#tr_forma").hide();
+			$("#tr_forma_diskovi").hide();
 			var table = $("#tabela_ostali_podaci");
 			$("#tabela_ostali_podaci tbody tr").remove();
 			$("#brisi").remove();
 			$("button#dodaj").remove();
 			$("#pretraga").hide();
+			$("#filter").hide();
+			document.getElementById('filter').remove();
 			$("#tabela_header").append(tableHeader("kategorije"));
 			for(let k of kategorije) {
 				table.append(makeTableRowIzbor("kategorije",k));
 			}
-			$(".prikaz").append("<button id = \"dodaj\" onclick=\"\">Dodaj</button>");
+			$(".prikaz").append("<br><button id = \"dodaj\" onclick=\"\" ><a href = \"dodajKategoriju.html\" class=\"btn btn-primary\">Dodaj</a></button>");
 			$("#homepage").show();
 		}
 	});
 }
-function ucitajDiskove() {
+function ucitajDiskove(uloga) {
 	$.ajax({
 		url: "rest/ucitajDiskove",
 		type: "GET",
@@ -310,14 +404,20 @@ function ucitajDiskove() {
 			console.log(diskovi);
 			$("#tabela_ostali_podaci").show();
 			$("#tr_forma").hide();
+		    $("#tr_forma_diskovi").show();
 			var table = $("#tabela_ostali_podaci");
 			$("#tabela_ostali_podaci tbody tr").remove();
 			$("#brisi").remove();
-			$("button#dodaj").remove();
-			$("#pretraga").hide();
+			//$("button#dodaj").remove();
+			//$("#pretraga").hide();
 			$("#tabela_header").append(tableHeader("diskovi"));
 			for(let d of diskovi) {
 				table.append(makeTableRowIzbor("diskovi",d));
+			}
+            //console.log("KORISINIKKK  " + uloga + "   cm");
+			
+			if(uloga.localeCompare("ADMIN")>-1){$(".prikaz").append("<br><button id = \"dodaj\" onclick=\"\"><a href = \"dodajDisk.html\" class=\"btn btn-primary\">Dodaj</a></button>");
+		    //console.log("USAO U IFFFFFFFFFFFFFFFFFF");    
 			}
 			$("#homepage").show();
 		}
@@ -417,9 +517,9 @@ function makeTableRowIzbor(izbor,obj) {
 		row =
 			`<tbody>
 			    <tr>
-					<td class='align-middle'><span class="link" onclick="">${obj.ime}</span></td>
-					<td class='align-middle'>${obj.kapacitet}</td>
-					<td class='align-middle'>${obj.vm}</td>					
+					<td id = "klik" class='align-middle'><span class="link" onclick="izmenaDiska('${obj.ime}')">${obj.ime}</span></td>
+					<td id = "klik" class='align-middle'>${obj.kapacitet}</td>
+					<td id = "klik" class='align-middle'>${obj.vm}</td>					
 			   </tr>
 			   </tbody>`;
 		
@@ -429,7 +529,7 @@ function makeTableRowIzbor(izbor,obj) {
 		row =
 			`<tbody>
 			    <tr>
-					<td class='align-middle'>${obj.ime}</td>
+					<td class='align-middle'><span class="link" onclick="izmenaKategorije()">${obj.ime}</td>
 					<td class='align-middle'>${obj.brojJezgara}</td>
 					<td class='align-middle'>${obj.RAM}</td>
 					<td class='align-middle'>${obj.GPU}</td>
@@ -441,12 +541,29 @@ function makeTableRowIzbor(izbor,obj) {
 	return row;
 }
 
+function izmenaDiska(obj){
+	location.replace("izmenaDisk.html?x="+obj);
+}
+
+function getUrlVars() {
+    var vars = {};
+    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+        vars[key] = value;
+    });
+    return vars;
+}
+
+function izmenaKategorije(){
+	location.replace("izmenaKategorije.html");
+}
+
 function loadVM(virtuelneMasine) {
 	var table = $("#tabela_ostali_podaci");
 	$("#tabela_ostali_podaci tbody tr").remove();
 	$("#brisi").remove();
 	$("button#dodaj").remove();
 	$("#pretraga").show();
+	$("#tr_forma_diskovi").hide();
 	var row = `<tr  id = 'brisi'>
 					<th>Ime</th>
 					<th>Broj jezgara</th>
@@ -509,4 +626,108 @@ function isLoggedOut() {
 	});
 }
 
+function filterDiskovi(uloga){
+	var data = getFormData($("#filter_diskovi"));
+	var s = JSON.stringify(data); 
+	$.ajax({
+		url: "rest/filterDiskovi",
+		type: "POST",
+		data: s,
+		contentType: "application/json",
+		dataType: "json",
+		complete : function (data) {
+			diskovi = JSON.parse(data.responseText);
+			console.log(diskovi);
+			//$("#tabela_ostali_podaci").show();
+		    $("#tr_forma").hide();
+		    $("#tr_forma_diskovi").show();
+			var table = $("#tabela_ostali_podaci");
+			$("#tabela_ostali_podaci tbody tr").remove();
+			$("button#dodaj").remove();
+			for(let d of diskovi) {
+				table.append(makeTableRowIzbor("diskovi",d));
+			}
+			
+			console.log("KORISINIKKK  " + uloga + "   cm");
+			
+			if(uloga.localeCompare("ADMIN")>-1){
+		        $(".prikaz").append("<br><button id = \"dodaj\" onclick=\"\"><a href = \"dodajDisk.html\" class=\"btn btn-primary\">Dodaj</a></button>");
+		    console.log("USAO U IFFFFFFFFFFFFFFFFFF");  
+		    }  
+		}
+	});
+}
 
+function loadDiskovi(diskovii) {
+	var table = $("#tabela_ostali_podaci_diskovi");
+	$("#tabela_ostali_podaci tbody tr").remove();//nzm jel treba
+	$("#tabela_ostali_podaci_diskovi tbody tr").remove();
+	$("#brisi").remove();
+	$("button#dodaj").remove();
+	$("#pretraga").show();
+	var row = `<tr  id = 'brisi'>
+					<th>Ime</th>
+					<th>Kapacitet</th>
+					<th>Naziv VM</th>
+				</tr>`
+	table.append(row);
+	for(let disk of diskovii) {
+		table.append(makeTableRowIzbor("diskovi", disk));
+	}
+}
+
+/*function makeTableRowDiskovi(disk) {
+	var naziv = disk.ime;
+	var kapacitet = disk.kapacitet;
+	var vm = disk.vm;
+	var row =
+		`<tbody><tr>
+			<td>${naziv}</td>
+			<td>${kapacitet}</td>
+			<td>${vm}</td>
+		</tr></tbody>`;
+	
+	return row;
+}*/
+
+function addDisk() {
+	var data = getFormData($("#dodajDisk")); //ili dic class="prikaz" NIJE DOBRO OVO SA tabela_ostali_podaci
+	var racun = JSON.stringify(data);
+	$.ajax({
+		url: "rest/addDisk",
+		type: "POST",
+		data: racun,
+		contentType: "application/json",
+		dataType: "json",
+		complete : function (data) {
+			d = JSON.parse(data.responseText);			
+			if(d.added) {
+				console.log("ulazzzz");
+				if(d.uloga.localeCompare("superadmin")==0)
+					window.location.replace("/supAdminPocetna.html");
+				else
+					window.location.replace("/adminPocetna.html");
+			}
+		} 
+	});
+}
+
+function addKategorija() {
+	var data = getFormData($("#dodajKategoriju"));
+	var racun = JSON.stringify(data);
+	$.ajax({
+		url: "rest/addKategorija",
+		type: "POST",
+		data: racun,
+		contentType: "application/json",
+		dataType: "json",
+		complete : function (data) {
+			d = JSON.parse(data.responseText);			
+			if(d.added) {
+				console.log("ulazzzz");
+				if(d.uloga.localeCompare("superadmin")==0)
+					window.location.replace("/supAdminPocetna.html");
+			}
+		} 
+	});
+}

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Izmena kategorije</title>
+        <script src="js/jquery.min.js"></script>
+		<script src="js/script.js"></script>
+		<link href="css/style.css" rel="stylesheet">
+		<link rel="stylesheet" href="bootstrap-4.3.1-dist/css/bootstrap.min.css">
+		<script src="bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
+		<script>
+			$(document).ready( function() {
+				proveriUlogovanogKategorija();
+			});
+		</script>
+        <style>
+		    body {
+			    text-align: center;
+			}
+			form {
+			    display: inline-block;
+			}
+		    
+		</style>
+</head>
+<body>
+	<form id="izmenaDisk">
+	<table id="tabela_izmena_disk">
+		
+		<tr>
+			<td>
+				<label for="exampleInputEmail1">Naziv kategorije</label> 
+			</td>
+			<td>
+				<input type="text" class="form-control" id="ime" aria-describedby="emailHelp" placeholder="Enter name" name="ime" required>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label for="exampleInputPassword1">Broj jezgara</label> 
+			</td>
+			<td>
+				<input type="text" class="form-control" id="brojJezgara" placeholder="Enter number of cores" name="brojJezgara" required>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label for="exampleInputEmail1">RAM</label> 
+			</td>
+			<td>
+				<input type="text" class="form-control" id="RAM" aria-describedby="emailHelp" placeholder="Enter RAM" name="RAM" required>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label for="exampleInputPassword1">GPU</label> 
+			</td>
+			<td>
+				<input type="text" class="form-control" id="GPU" placeholder="Enter GPU" name="GPU" required>
+			</td>
+		</tr>
+		<tr>
+		 <td align="center"><input type="button" value="Primeni izmenu" onclick="addKategorija()" class="btn btn-primary"></td>
+		 <td align="center"><input type="button" value="Izbrisi disk" onclick="obrisiDisk(document.getElementById('ime').value)" class="btn btn-primary"></td>
+		</tr>
+		
+	
+	</table>
+	<fieldset id="log_war"></fieldset>
+	</form>
+	</body>
+</html>

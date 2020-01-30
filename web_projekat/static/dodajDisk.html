@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Dodavanje diska</title>
+        <script src="js/jquery.min.js"></script>
+		<script src="js/script.js"></script>
+		<link href="css/style.css" rel="stylesheet">
+		<link rel="stylesheet" href="bootstrap-4.3.1-dist/css/bootstrap.min.css">
+		<script src="bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
+		<script>
+			$(document).ready( function() {
+				proveriUlogovanogDiskDodavanje();
+			});
+		</script>
+
+</head>
+<body>
+<div class="content">
+<form id="dodajDisk">
+	<table id="form_holder">
+		
+		<tr>
+			<td>
+				<label for="exampleInputEmail1">Naziv diska</label> 
+			</td>
+			<td>
+				<input type="text" class="form-control" id="ime" aria-describedby="emailHelp" placeholder="Enter name" name="ime" required>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label for="exampleInputPassword1">Kapacitet</label> 
+			</td>
+			<td>
+				<input type="text" class="form-control" id="kapacitet" placeholder="Enter capacity" name="kapacitet" required>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label for="exampleInputEmail1">Naziv VM </label> 
+			</td>
+			<td>
+			    <select id="nazivVM" name = "vm">
+			        <option value="vm1">vm1</option>
+				    <option value="vm2">vm2</option>
+				    <option value="vm3">vm3</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+		 <td align="center"><input type="button" value="Primeni" onclick="addDisk()" class="btn btn-primary"></td>
+		</tr>
+	
+	</table>
+	<fieldset id="log_war"></fieldset>
+	</form>
+	</div>
+</body>
+</html>
