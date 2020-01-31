@@ -55,10 +55,12 @@ public class GenerisanjeJSONa {
 		Organizacija org2 = new Organizacija("Org2", "Opis2", "");
 		
 		org1.dodajKorisnika(Korisnik2);
+		Korisnik2.setOrganizacija(org1.getIme());
 		org1.dodajVM(vm1);
 		org1.dodajVM(vm2);
 		
 		org2.dodajKorisnika(Korisnik3);
+		Korisnik3.setOrganizacija(org2.getIme());
 		org2.dodajVM(vm3);
 		
 		HashMap<String, Organizacija> organizacije = new HashMap<String, Organizacija>();

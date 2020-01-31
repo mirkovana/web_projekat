@@ -4,8 +4,7 @@
 
 <title>Dodavanje korisnika</title>
         <script src="js/jquery.min.js"></script>
-        <script src="js/script.js"></script>
-		<script src="js/script2.js"></script>
+        <script src="js/script2.js"></script>
 		<link href="css/style.css" rel="stylesheet">
 		<link rel="stylesheet" href="bootstrap-4.3.1-dist/css/bootstrap.min.css">
 		<script src="bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
@@ -17,7 +16,7 @@
 
 </head>
 <body>
-<form id="dodajOrganizaciju">
+<form id="dodajKorisnika">
 	<table id="form_holder">
 		
 		<tr>
@@ -57,7 +56,7 @@
 				<label for="exampleInputEmail1">Organizacija</label> 
 			</td>
 			<td>
-				<select id = "orgSelect">
+				<select id = "orgSelect" name = "organizacija">
 				  
 				</select>
 			</td>
@@ -67,12 +66,12 @@
 				<label for="exampleInputPassword1">Uloga</label> 
 			</td>
 			<td>
-				<input type="radio" name="uloga" value="admin"> admin
+				<input type="radio" name="uloga" value="admin" checked="checked"> admin
 				<input type="radio" name="uloga" value="korisnik"> korisnik
 			</td>
 		</tr>
 		<tr>
-		 <td align="center"><input type="button" value="Dodaj" onclick="uhjbaddOrganizacija()" class="btn btn-primary"></td>
+		 <td align="center"><input type="button" value="Dodaj" onclick="dodajKorisnika()" class="btn btn-primary"></td>
 		</tr>	
 	</table>
 	<fieldset id="log_war"></fieldset>

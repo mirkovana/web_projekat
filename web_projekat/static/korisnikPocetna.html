@@ -76,7 +76,7 @@
 			<ul>
 			  <li><input class = "dugme" type = "button" value = "Virtuelne masine" onclick = "ucitaj()"></li>
 			  <li><input class = "dugme" type = "button" value = "Diskovi" onclick = "ucitajDiskove()"></li>
-			  <li><a href="izmenaProfila.html"><input type = "button" value = "Moj profil"></a></li>
+			  <li><a href="izmenaProfila.html?x=none"><input type = "button" value = "Moj profil"></a></li>
 			  <li class = "odjava"><a href="rest/logout"><input type = "button" value = "Odjava"></a></li>
 			</ul>
 		</div>
@@ -85,27 +85,23 @@
 			<table id="tabela_ostali_podaci">
 				<thead id = "tabela_header">
 					<tr id = "tr_forma">
-					<form id = 'filter'>
-						<th><input type = 'text' name = 'ime'><input type="button" value=">" onclick='filter()'></th>
-						<th><input type = 'text' name = 'brojJezgara'><input type='button' value='>' onclick='filter()'></th>
-						<th><input type = 'text' name = 'ram'><input type='button' value='>' onclick='filter()'></th>
-						<th><input type = 'text' name = 'gpu'><input type='button' value='>' onclick='filter()'></th>
-						<th><input type = 'text' name = 'kategorija'><input type='button' value='>' onclick='filter()'></th>
-					</form>
-				</tr>
-				</thead>
-			</table>
-			<table id="tabela_ostali_podaci_diskovi">
-				<thead id = "tabela_header_diskovi">
+						<form id = 'filter'>
+							<th><input type = 'text' name = 'ime'><input type="button" value=">" onclick='filter()'></th>
+							<th><input type = 'text' name = 'brojJezgara'><input type='button' value='>' onclick='filter()'></th>
+							<th><input type = 'text' name = 'ram'><input type='button' value='>' onclick='filter()'></th>
+							<th><input type = 'text' name = 'gpu'><input type='button' value='>' onclick='filter()'></th>
+							<th><input type = 'text' name = 'kategorija'><input type='button' value='>' onclick='filter()'></th>
+						</form>
+					</tr>
 					<tr id = "tr_forma_diskovi">
-					<form id = 'filter_diskovi'>
-						<th><input type = 'text' name = 'ime_diska'><input type="button" value=">" onclick='filterDiskovi()'></th>
-						<th><input type = 'text' name = 'kapacitet'><input type='button' value='>' onclick='filterDiskovi()'></th>
-						<th><input type = 'text' name = 'naziv_vm'><input type='button' value='>' onclick='filterDiskovi()'></th>
-					</form>
-				</tr>
+						<form id = 'filter_diskovi'>
+							<th><input type = 'text' name = 'ime_diska'><input type="button" value=">" onclick='filterDiskovi()'></th>
+							<th><input type = 'text' name = 'kapacitet'><input type='button' value='>' onclick='filterDiskovi()'></th>
+							<th><input type = 'text' name = 'naziv_vm'><input type='button' value='>' onclick='filterDiskovi()'></th>
+						</form>
+					</tr>
 				</thead>
-			</table>			
+			</table>		
 		</div>
 	</body>
 </html>

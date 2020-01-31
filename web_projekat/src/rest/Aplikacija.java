@@ -123,48 +123,21 @@ public class Aplikacija {
 		return retMap;
 	}
 	
-	public ArrayList<HashMap<String,String>> izvuciKorisnike(Korisnik kor) {
-		ArrayList<HashMap<String,String>> virtuelne = new ArrayList<HashMap<String,String>>();		
+	public ArrayList<Korisnik> izvuciKorisnike(Korisnik kor) {
+		ArrayList<Korisnik> korisnici = new ArrayList<Korisnik>();		
 		if(kor.getUloga().equals(Uloga.SUPERADMIN))
-			for(Korisnik r : this.getKorisnici().values()) {
-				HashMap<String, String> k = new HashMap<String, String>();
-				k.put("email", r.getEmail());
-				k.put("ime", r.getIme());
-				k.put("prezime", r.getPrezime());
-				String orgKor = "";
-				for(Organizacija org:this.organizacije.values())
-				{
-					if(org.getKorisnici()!=null)
-						if(org.getKorisnici().contains(r.getEmail()))
-							orgKor += org.getIme()+" ";
-				}
-				k.put("organizacija", orgKor);
-				virtuelne.add(k);
+			for(Korisnik k : this.korisnici.values()) {
+				if(k.getOrganizacija()==null)
+					k.setOrganizacija("");
+				korisnici.add(k);
 			}	
 		else {
-			List<String> orgKor = new ArrayList<String>();
-			String org = "";
-			for(Organizacija o : this.organizacije.values())
-			{
-				if(o.getKorisnici()!=null)
-					if(o.getKorisnici().contains(kor.getEmail()))
-					{
-						org = o.getIme();
-						orgKor = o.getKorisnici();
-						break;
-					}
-			}
-			for(Korisnik r : this.getKorisnici().values()) 
-				if(orgKor.contains(r.getEmail())){
-					HashMap<String, String> k = new HashMap<String, String>();
-					k.put("email", r.getEmail());
-					k.put("ime", r.getIme());
-					k.put("prezime", r.getPrezime());
-					k.put("organizacija", org);
-					virtuelne.add(k);
-				}
+			for(Korisnik k : this.korisnici.values())
+				if(k.getOrganizacija()!=null)
+					if(k.getOrganizacija().equalsIgnoreCase(kor.getOrganizacija()))
+						korisnici.add(k);
 		}
-		return virtuelne;
+		return korisnici;
 	}
 	
 	public ArrayList<VirtualnaMasina> izvuciVM(Korisnik k) {
@@ -258,5 +231,20 @@ public class Aplikacija {
 				}
 			}
 		}
+	}
+
+	public void dodajKorisnika(Korisnik korisnikForma) {
+		// TODO Auto-generated method stub
+		this.korisnici.put(korisnikForma.getEmail(), korisnikForma);
+	}
+
+	public void dodajKorisnikaUorganizaciju(Korisnik korisnikForma) {
+		// TODO Auto-generated method stub
+		this.organizacije.get(korisnikForma.getOrganizacija()).dodajKorisnika(korisnikForma);
+	}
+
+	public void izbrisiKorisnika(String param) {
+		// TODO Auto-generated method stub
+		this.korisnici.remove(param);
 	}
 }

@@ -115,22 +115,9 @@ public class VMApp {
 			res.type("application/json");	
 			Session ss = req.session(true);
 			Korisnik korisnikSession = ss.attribute("user");
-			/*String s;
-			if(korisnikSession.getUloga().equals(Uloga.SUPERADMIN))
-				s = gson.toJson(mape.izvuciOrganizacije());
-			else
-				s = gson.toJson(mape.izvOrg(korisnikSession));
-			return s;*/
-			System.out.println(gson.toJson(mape.izvuciDiskove(korisnikSession)));
 			return gson.toJson(mape.izvuciDiskove(korisnikSession));
 		});
-		
-		get("/rest/ucitajDiskove22", (req, res) -> {
-			res.type("application/json");	
-			
-			return gson.toJson(mape.getDiskovi().values());
-		});
-			
+				
 		post("/rest/filter", (req, res) -> {
 			System.out.println("prosao1");
 			System.out.println(req.body());
@@ -310,13 +297,22 @@ public class VMApp {
 			return gson.toJson(k);
 		});
 		
-		post("/rest/izmeni", (req, res) -> {
+		post("/rest/izmeni", (req, res) -> { //izmena korisnika
 			res.type("application/json");
 			HashMap<String, String> izmene = gson.fromJson(req.body(), HashMap.class);
 			Session ss = req.session(true);
 			System.out.println(req.body());
 			Korisnik k = ss.attribute("user");
-			Korisnik stari = mape.getKorisnici().get(k.getEmail());
+			Korisnik stari = null;
+			//provera da li korisnik menja sam sebe ili nekog drugog
+			boolean samSebe = true;
+			if(izmene.get("stariKorisnik").equals(k.getEmail())) 
+				stari = mape.getKorisnici().get(k.getEmail());
+			else
+			{
+				stari = mape.getKorisnici().get(izmene.get("stariKorisnik"));
+				samSebe = false;
+			}
 			Korisnik novi = new Korisnik(stari);
 			String email = izmene.get("email"), ime = izmene.get("ime"), pre = izmene.get("prezime");
 			String loz = izmene.get("pass"), loz2 = izmene.get("pass2");
@@ -338,10 +334,8 @@ public class VMApp {
 				else
 					ind = -2;
 			else if(!loz.equals("") && loz2.equals("")) ind = -1;
-			if(ind == 1) {
-				mape.updateKorisnik(stari,novi);
-				ss.attribute("user", novi);
-			}
+			if(ind == 1) mape.updateKorisnik(stari,novi);
+			if(samSebe) ss.attribute("user", novi);
 			izmene.clear();
 			izmene.put("uloga", k.getUloga().toString().toLowerCase());
 			izmene.put("izmena", String.valueOf(ind));
@@ -357,8 +351,10 @@ public class VMApp {
 			ArrayList<Disk> ucitaniDiskovi;
 			if(k.getUloga().equals(Uloga.KORISNIK))
 				ucitaniDiskovi = mape.izvuciDiskove(k);
-			else
-				ucitaniDiskovi = new ArrayList<Disk>(mape.getDiskovi().values());
+			else if(k.getUloga().equals(Uloga.ADMIN))
+				ucitaniDiskovi = mape.izvuciDiskove(k);
+				else
+					ucitaniDiskovi = new ArrayList<Disk>(mape.getDiskovi().values());
 			String[] params = req.body().split(":|\\,");
 			ArrayList<Disk> diskovii = new ArrayList<Disk>();
 			String ime = params[1].replaceAll("\"", "");
@@ -542,6 +538,64 @@ public class VMApp {
 			Session ss = req.session(true);
 			Korisnik k = ss.attribute("user");
 			return gson.toJson(k);
+		});
+		
+		post("/rest/dodajKorisnika", (req, res) -> {
+			Session ss = req.session(true);
+			Korisnik k = ss.attribute("user");
+			HashMap<String, String> returnMess = new HashMap<String, String>();
+			returnMess.put("added", "imaKorisnik");
+			returnMess.put("uloga", k.getUloga().toString().toLowerCase());
+			String[] params = req.body().split(":|\\,");
+			for(int i = 0; i < params.length ; i++) 
+				params[i] = params[i].replaceAll("\"|}", "");
+			for(int i = 0; i < params.length ; i++) {
+				if(params[i].equals("")){
+					returnMess.replace("added", "prazno");
+					return gson.toJson(returnMess);
+				}
+			}
+			Korisnik korisnikForma = new Korisnik();
+			if(mape.getKorisnici().containsKey(params[5]))
+				return gson.toJson(returnMess);
+			korisnikForma.setIme(params[1]);
+			korisnikForma.setPrezime(params[3]);
+			korisnikForma.setEmail(params[5]);
+			korisnikForma.setLozinka(params[7]);
+			if(params.length==12)
+			{
+				if(params[11].equalsIgnoreCase("admin"))
+					korisnikForma.setUloga(Uloga.ADMIN);
+				else korisnikForma.setUloga(Uloga.KORISNIK);
+				korisnikForma.setOrganizacija(params[9]);							
+			}
+			else
+			{
+				if(params[9].equalsIgnoreCase("admin"))
+					korisnikForma.setUloga(Uloga.ADMIN);
+				else korisnikForma.setUloga(Uloga.KORISNIK);
+				korisnikForma.setOrganizacija(k.getOrganizacija());
+			}
+			mape.dodajKorisnikaUorganizaciju(korisnikForma);	
+			mape.dodajKorisnika(korisnikForma);
+			returnMess.replace("added", "true");
+			return gson.toJson(returnMess);
+		});
+		
+		post("/rest/izbrisiKorisnika", (req, res) -> {
+			String izbrisan = "false";
+			String param = req.body().split(":|\\,")[1].replaceAll("\"|}", "");
+			Session ss = req.session(true);
+			Korisnik k = ss.attribute("user");
+			HashMap<String, String> returnMess = new HashMap<String, String>();
+			returnMess.put("obrisan", "false");
+			returnMess.put("uloga", k.getUloga().toString().toLowerCase());
+			if(k.getEmail().equalsIgnoreCase(param))
+				return gson.toJson(returnMess);
+			mape.izbrisiKorisnika(param);
+			returnMess.replace("obrisan", "true");
+			System.out.println("PARAMETAR BRISANJE " + param);
+			return gson.toJson(returnMess);
 		});
 	}
 }

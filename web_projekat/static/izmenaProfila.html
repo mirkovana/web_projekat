@@ -9,7 +9,7 @@
 	<link rel="stylesheet" href="bootstrap-4.3.1-dist/css/bootstrap.min.css">
 	<script>
 		$(document).ready( function() {
-			getUlogovan();
+			KorisnikKojiSeMenja(getUrlVars()["x"]);
 		});
 	</script>
 </head>
@@ -73,7 +73,10 @@
 				</td>
 			</tr>
 			<tr>
-			<td><input type="button" value="Izmeni" onclick="izmeni()" class="btn btn-primary"></td>
+				<td><input type="button" value="Izmeni" onclick="izmeni()" class="btn btn-primary"></td>
+			</tr>
+			<tr>
+				<td><input type="button" id = "obrisi_btn" value="Obrisi" onclick="obrisi()" class="btn btn-primary"></td>
 			</tr>
 			<tr>
 			<fieldset id="log_war_mess"></fieldset>

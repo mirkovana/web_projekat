@@ -129,7 +129,7 @@ function proveriUlogovanog(){
 
 function proveriUlogovanogDisk(disk){
 	$.ajax({
-		url: "rest/ucitajDiskove22",
+		url: "rest/ucitajDiskove",
 		type: "GET",
 		contentType: "application/json",
 		complete: function(data) {
@@ -408,17 +408,13 @@ function ucitajDiskove(uloga) {
 			var table = $("#tabela_ostali_podaci");
 			$("#tabela_ostali_podaci tbody tr").remove();
 			$("#brisi").remove();
-			//$("button#dodaj").remove();
-			//$("#pretraga").hide();
 			$("#tabela_header").append(tableHeader("diskovi"));
 			for(let d of diskovi) {
 				table.append(makeTableRowIzbor("diskovi",d));
 			}
-            //console.log("KORISINIKKK  " + uloga + "   cm");
+            if(uloga.localeCompare("ADMIN")>-1)
+            	$(".prikaz").append("<br><button id = \"dodaj\" onclick=\"\"><a href = \"dodajDisk.html\" class=\"btn btn-primary\">Dodaj</a></button>"); 
 			
-			if(uloga.localeCompare("ADMIN")>-1){$(".prikaz").append("<br><button id = \"dodaj\" onclick=\"\"><a href = \"dodajDisk.html\" class=\"btn btn-primary\">Dodaj</a></button>");
-		    //console.log("USAO U IFFFFFFFFFFFFFFFFFF");    
-			}
 			$("#homepage").show();
 		}
 	});
@@ -434,6 +430,7 @@ function ucitaj() {
 			virtuelneMasine = JSON.parse(data.responseText);
 			$("#tabela_ostali_podaci").show();
 			$("#tr_forma").show();
+			$("#tr_forma_diskovi").hide();
 			console.log(virtuelneMasine);
 			loadVM(virtuelneMasine);
 			$("#homepage").show();
@@ -506,7 +503,7 @@ function makeTableRowIzbor(izbor,obj) {
 		   row =
 			`<tbody>
 			    <tr>
-					<td class='align-middle'><span class="link" onclick="">${obj.email}</span></td>
+					<td class='align-middle'><span class="link" onclick="izmenaKorisnika('${obj.email}')">${obj.email}</span></td>
 					<td class='align-middle'>${obj.ime}</td>
 					<td class='align-middle'>${obj.prezime}</td>
 					<td class='align-middle'>${obj.organizacija}</td>
@@ -543,6 +540,10 @@ function makeTableRowIzbor(izbor,obj) {
 
 function izmenaDiska(obj){
 	location.replace("izmenaDisk.html?x="+obj);
+}
+
+function izmenaKorisnika(obj){
+	location.replace("izmenaProfila.html?x="+obj);
 }
 
 function getUrlVars() {
