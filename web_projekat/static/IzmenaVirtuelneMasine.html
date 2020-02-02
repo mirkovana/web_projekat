@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Izmena</title>
+	<script src="js/jquery.min.js"></script>
+	<script src="js/script2.js"></script>
+	<link href="css/style.css" rel="stylesheet">
+	<link rel="stylesheet" href="bootstrap-4.3.1-dist/css/bootstrap.min.css">
+	<script>
+		$(document).ready( function() {
+			getKategorije();
+			VMKojaSeMenja(getUrlVars()["x"]);
+			getUlogovanVM();
+		});
+	</script>
+</head>
+<body>
+	<form id="izmenaPodataka">
+		<table id="form_holder">
+			<tr>
+				<td>
+					<h4>Izmena virtuelne masine</h4>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label for="exampleInputEmail1">Ime</label> 
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<input type="text" class="form-control" id="ime" placeholder = "" name = "ime">
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label for="exampleInputKAt">Kategorija</label> 
+				</td>
+			</tr>
+			<tr>
+				<td>
+				<select id = "kategorijaSelect" name = "kategrija" onchange="selectPromena()">
+				  
+				</select>
+			</td>
+			</tr>
+			<tr>
+				<td>
+					<label for="exampleInputBrJezgra">Broj jezgra</label> 
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<input type="text" class="form-control" id="brj" placeholder = "" name = "brjezgra" disabled="disabled">
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label for="exampleInputPassword1">RAM</label> 
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<input type="text" class="form-control" id="ram" placeholder = "" name = "ram" disabled="disabled">
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label for="exampleInputBrJezgra">GPU</label> 
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<input type="text" class="form-control" id="gpu" placeholder = "" name = "gpu" disabled="disabled">
+				</td>
+			</tr>
+			<tr id = "aktivnost">
+				<td>
+					<label for="exampleInputPassword1">Aktivnost</label> 
+					<input type="radio" name="uloga" value="true" id = "true" checked="checked"> Upaljena
+					<input type="radio" name="uloga" value="false" id = "false"> Ugasena
+				</td>
+			</tr>
+			<tr>
+				<td><input type="button" value="Izmeni" onclick="izmeniVM()" class="btn btn-primary"></td>
+			</tr>
+			<tr>
+				<td><input type="button" id = "obrisi_btn" value="Obrisi" onclick="obrisiVM()" class="btn btn-primary"></td>
+			</tr>
+			<tr>
+			<td><fieldset id="log_war_mess"></fieldset><td>
+			</tr>
+		</table>
+	</form>
+</body>
+</html>
