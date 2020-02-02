@@ -1,6 +1,7 @@
 package beans;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class VirtualnaMasina {
@@ -39,6 +40,7 @@ public class VirtualnaMasina {
 		GPU = gPU;
 		this.diskovi = new ArrayList<String>();
 		this.aktivnosti = new ArrayList<Aktivnost>();
+		this.aktivnosti.add(new Aktivnost(new Date(), null));
 		this.ukljucena = true;
 	}
 

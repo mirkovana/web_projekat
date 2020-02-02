@@ -16,7 +16,35 @@ function getUrlVars() {
     return vars;
 }
 
-function izmeni(){
+function getUlogovanVM(){ // provera ulogovanog za vm
+	var ul;
+	$.ajax({
+		url: "rest/getUlogovan",
+		type: "GET",
+		contentType: "application/json",
+		complete : function (data) {
+			d = JSON.parse(data.responseText); 
+			console.log("ULOGA" + d.uloga);
+			ul = d.uloga;
+			if(ul.localeCompare("SUPERADMIN")==0){
+				document.getElementById("true").disabled = true;
+				document.getElementById("false").disabled = true;
+			}
+			if(ul.localeCompare("ADMIN")==0)
+				document.getElementById("aktivnost").disabled = true;
+			if(ul.localeCompare("KORISNIK")==0){
+				document.getElementById("ime").disabled = true;
+				document.getElementById("kategorijaSelect").disabled = true;
+				document.getElementById("true").disabled = true;
+				document.getElementById("false").disabled = true;
+				$("#obrisi_btn").hide();
+			}
+		} 
+	});
+	
+}
+
+function izmeniKorisnika(){
 	var data2 = getFormData($("#izmenaPodataka")); 
 	console.log(data2);
 	data2["stariKorisnik"] = document.getElementById("email").placeholder;
@@ -120,6 +148,28 @@ function getOrganizacije() // da bi se ubacile u select tag
 	});
 }
 
+function getKategorije()
+{
+	$.ajax({
+		url: "rest/ucitajKategorije",
+		type: "GET",
+		contentType: "application/json",
+		dataType: "json",
+		complete: function(data) {
+			organizacije = JSON.parse(data.responseText);
+			console.log(organizacije);			
+			for(let o of organizacije) {
+				var x = document.getElementById("kategorijaSelect");
+				var opt = document.createElement("option");
+				opt.text = o.ime;
+				opt.value = o.ime; 
+				x.add(opt); 
+				console.log(o.ime);			
+			}
+		}
+	});
+}
+
 function dodajKorisnika()
 {
 	var data2 = getFormData($("#dodajKorisnika")); 
@@ -185,7 +235,67 @@ function KorisnikKojiSeMenja(kor){
 	});
 }
 
-function obrisi(){
+function VMKojaSeMenja(vm){
+	if(vm.localeCompare("none")===0){
+		getUlogovan();
+		$("#obrisi_btn").hide();
+		return;
+	}
+	console.log("VIRTUELNA " + vm);
+	$.ajax({
+		url: "rest/ucitaj",
+		type: "GET",
+		contentType: "application/json",
+		complete: function(data) {
+			d = JSON.parse(data.responseText);
+			$("#aktivnost tbody tr").remove();
+			for(let o of d) {
+				if(o.ime.localeCompare(vm)===0){
+					n = o.aktivnost.length;
+					o.aktivnost = setCharAt(o.aktivnost,0,'{');
+					o.aktivnost = setCharAt(o.aktivnost,n-1,'}');
+					document.getElementById("ime").placeholder = o.ime;
+					$("#kategorijaSelect").val(o.kategorija).change();;
+					document.getElementById("brj").placeholder = o.brojJezgara;
+					document.getElementById("ram").placeholder = o.RAM;
+					document.getElementById("gpu").placeholder = o.GPU;
+					if(o.upaljena.localeCompare("true")==0)
+						document.getElementById('true').checked = true;
+					else
+						document.getElementById('false').checked = true;
+					break;
+					aktivnost = JSON.parse(o.aktivnost);
+					console.log("AKTIVNOST  " + JSON.parse(o.aktivnost));
+					for(let k of aktivnost){
+						$("#aktivnost tbody").append(trow(k));
+						console.log("AKTIVNOST  " + k);
+					}
+					
+				}
+			}
+			
+		}
+	});
+}
+
+function setCharAt(str,index,chr) {
+    if(index > str.length-1) return str;
+    return str.substr(0,index) + chr + str.substr(index+1);
+}
+
+function trow(aktivnost){
+	var p = aktivnost.paljenje;
+	var g = aktivnost.gasenje;
+	var row =
+		`<tbody><tr>
+			<td>${p}</td>
+			<td>${g}</td>
+		</tr></tbody>`;
+	
+	return row;
+}
+
+function obrisiKorisnika(){
 	var data2 = {};
 	data2["korisnikBrisanje"] = document.getElementById("email").placeholder;
 	var s = JSON.stringify(data2);
@@ -206,6 +316,90 @@ function obrisi(){
 			}
 			else{
 				alert("Ne mozes obrisati sam sebe");
+			}
+				
+		}
+	});
+}
+
+function selectPromena(){ // pri promeni vm brj ram i gpu se menjaju promenom select option
+	// kad se promeni select menjaju se prikazi polja sa vrednostima iz kategorije
+	var x = document.getElementById("kategorijaSelect").value;
+	$.ajax({
+		url: "rest/ucitajKategorije",
+		type: "GET",
+		contentType: "application/json",
+		complete: function(data) {
+			d = JSON.parse(data.responseText);
+			for(let o of d) {
+				if(o.ime.localeCompare(x)===0){
+					document.getElementById("brj").placeholder = o.brojJezgara;
+					document.getElementById("ram").placeholder = o.RAM;
+					document.getElementById("gpu").placeholder = o.GPU;					
+				}
+			}
+			
+		}
+	});
+}
+
+function izmeniVM(){
+	var data2 = getFormData($("#izmenaPodataka")); 
+	console.log(data2);
+	data2["staraVM"] = document.getElementById("ime").placeholder;
+	var s = JSON.stringify(data2);
+	$.ajax({
+		url: "rest/izmeniVM",
+		type: "POST",
+		data: s,
+		contentType: "application/json",
+		dataType: "json",
+		complete : function (data) {
+			d = JSON.parse(data.responseText);
+			if(d.izmena.localeCompare("0")==0)
+				//vec postoji
+			{
+				$("#log_war_mess").text("VM sa tim imenom vec postoji!");
+				$("#log_war_mess").css('color', 'red');
+			}
+			if(d.izmena.localeCompare("1")==0)
+			//sve okej
+			{
+				korisnikUloga = d.uloga;
+				console.log(korisnikUloga);
+				if(korisnikUloga.localeCompare("superadmin")==0)
+					window.location.replace("/supAdminPocetna.html");
+				else if(korisnikUloga.localeCompare("admin")==0)
+					window.location.replace("/adminPocetna.html");
+				else
+					window.location.replace("/korisnikPOcetna.html");
+					
+			}	
+		} 
+	});
+}
+
+function obrisiVM(){
+	var data2 = {};
+	data2["vmBrisanje"] = document.getElementById("ime").placeholder;
+	var s = JSON.stringify(data2);
+	$.ajax({
+		url: "rest/izbrisiVM",
+		type: "POST",
+		data: s,
+		contentType: "application/json",
+		dataType: "json",
+		complete : function (data) {
+			d = JSON.parse(data.responseText);
+			korisnikUloga = d.uloga;
+			if(d.obrisan.localeCompare("true")==0){
+				if(korisnikUloga.localeCompare("superadmin")==0)
+					window.location.replace("/supAdminPocetna.html");
+				else 
+					window.location.replace("/adminPocetna.html");
+			}
+			else{
+				alert("Ne uspelo brisanje");
 			}
 				
 		}

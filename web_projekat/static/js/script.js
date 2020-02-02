@@ -546,6 +546,10 @@ function izmenaKorisnika(obj){
 	location.replace("izmenaProfila.html?x="+obj);
 }
 
+function izmenaViruelneMasine(obj){
+	location.replace("izmenaVirtuelneMasine.html?x="+obj);
+}
+
 function getUrlVars() {
     var vars = {};
     var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
@@ -579,14 +583,14 @@ function loadVM(virtuelneMasine) {
 }
 
 
-function makeTableRow(racun) {
-	var naziv = racun.ime;
-	var kat = racun.kategorija;
-	var brj = racun.brojJezgara;
-	var ram = racun.RAM;
-	var gpu = racun.GPU;
+function makeTableRow(vm) {
+	var naziv = vm.ime;
+	var kat = vm.organizacija;
+	var brj = vm.brojJezgara;
+	var ram = vm.RAM;
+	var gpu = vm.GPU;
 	var row =
-		`<tbody><tr>
+		`<tbody><tr onclick="izmenaViruelneMasine('${naziv}')">
 			<td>${naziv}</td>
 			<td>${brj}</td>
 			<td>${ram}</td>

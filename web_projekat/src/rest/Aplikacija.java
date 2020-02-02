@@ -140,18 +140,18 @@ public class Aplikacija {
 		return korisnici;
 	}
 	
-	public ArrayList<VirtualnaMasina> izvuciVM(Korisnik k) {
-		ArrayList<VirtualnaMasina> virtuelne = new ArrayList<VirtualnaMasina>();
+	public ArrayList<HashMap<String, String>> izvuciVM(Korisnik k) {
+		ArrayList<HashMap<String, String>> virtuelne = new ArrayList<HashMap<String, String>>();
 		if(k.getUloga().equals(Uloga.SUPERADMIN))
 			for(VirtualnaMasina r : this.getVmovi().values()) {
-				VirtualnaMasina vm = new VirtualnaMasina(r);
+				HashMap<String, String> vm  = kreirajHashMapu(r);
 				for(Organizacija org : this.getOrganizacije().values())
 				{
 					if(org.getKorisnici()!=null)
 						if(org.getResursi().contains(r.getIme()))
-							vm.setKategorija(vm.getKategorija()+org.getIme()+" ");
+							vm.put("organizacija", org.getIme());
 				}
-				virtuelne.add(vm);
+				if( vm!=null )virtuelne.add(vm);
 			}
 		else {
 			List<String> vmLista = new ArrayList<String>() ;
@@ -164,9 +164,9 @@ public class Aplikacija {
 						break;
 					}
 			for(VirtualnaMasina r : this.getVmovi().values()) {
-				VirtualnaMasina vm = new VirtualnaMasina(r);
-				if(vmLista.contains(vm.getIme())){
-					vm.setKategorija(vm.getKategorija()+orgIme);
+				HashMap<String, String> vm = kreirajHashMapu(r);
+				if(vmLista.contains(r.getIme())){
+					vm.put("organizacija", orgIme);
 					virtuelne.add(vm);
 				}
 			}
@@ -175,6 +175,19 @@ public class Aplikacija {
 	}
 	
 	
+	private HashMap<String, String> kreirajHashMapu(VirtualnaMasina r) {
+		HashMap<String, String> mapa = new HashMap<String, String>();
+		mapa.put("ime", r.getIme());
+		mapa.put("kategorija", r.getKategorija());
+		mapa.put("brojJezgara", String.valueOf(r.getBrojJezgara()));
+		mapa.put("RAM", String.valueOf(r.getRAM()));
+		mapa.put("GPU", String.valueOf(r.getGPU()));
+		mapa.put("diskovi", String.valueOf(r.getDiskovi()));
+		mapa.put("aktivnost", r.getAktivnosti().toString());
+		mapa.put("upaljena", r.isUkljucena()?"true":"false");
+		return mapa;
+	}
+
 	public ArrayList<Kategorija> izvuciKategorije() {
 		ArrayList<Kategorija> virtuelne = new ArrayList<Kategorija>();
 		
@@ -246,5 +259,47 @@ public class Aplikacija {
 	public void izbrisiKorisnika(String param) {
 		// TODO Auto-generated method stub
 		this.korisnici.remove(param);
+	}
+
+	public void dodajIzmenjenuVM(String pos, VirtualnaMasina kojaSeMenja) {
+		// TODO Auto-generated method stub
+		this.vmovi.remove(pos);
+		this.vmovi.put(kojaSeMenja.getIme(), kojaSeMenja);
+		for(Organizacija org : this.organizacije.values())
+		{
+			if(org.getResursi()!=null)
+			{
+				if(org.getResursi().contains(pos))
+				{
+					org.getResursi().remove(pos);
+					org.getResursi().add(kojaSeMenja.getIme());
+				}
+			}
+		}
+		for(Disk d : this.diskovi.values())
+		{
+			if(d.getVm()!=null)
+			{
+				if(d.getVm().equals(pos))
+				{
+					d.setVm(kojaSeMenja.getIme());
+				}
+			}
+		}
+	}
+
+	public boolean izbrisiVirtuelnu(String param) {
+		if(this.vmovi.containsKey(param))
+		{
+			this.vmovi.remove(param);
+			for(Organizacija o : this.organizacije.values())
+				if(o.getResursi().contains(param))
+					o.getResursi().remove(param);
+			for(Disk o : this.diskovi.values())
+				if(o.getVm().equalsIgnoreCase(param))
+					o.setVm("");
+			return true;
+		}
+		return false;
 	}
 }

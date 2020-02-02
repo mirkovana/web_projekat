@@ -29,6 +29,11 @@ public class Aktivnost {
 	public void setGasenje(Date gasenje) {
 		this.gasenje = gasenje;
 	}
+
+	@Override
+	public String toString() {
+		return "Aktivnost [paljenje=" + paljenje + ", gasenje=" + gasenje + "]";
+	}
 	
 	
 

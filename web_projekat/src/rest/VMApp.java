@@ -597,5 +597,56 @@ public class VMApp {
 			System.out.println("PARAMETAR BRISANJE " + param);
 			return gson.toJson(returnMess);
 		});
+		
+		post("/rest/izmeniVM", (req,res)->{
+			res.type("application/json");
+			HashMap<String, String> izmene = gson.fromJson(req.body(), HashMap.class);
+			Session ss = req.session(true);
+			System.out.println(req.body());
+			Korisnik k = ss.attribute("user");
+			String pos = izmene.get("staraVM");
+			VirtualnaMasina kojaSeMenja = mape.getVmovi().get(pos);
+			String ime = izmene.get("ime"), kategorija = izmene.get("kategrija");
+			String ulogaStr = izmene.get("uloga");
+			boolean uloga = false;
+			if(ulogaStr != null)  uloga = Boolean.parseBoolean(ulogaStr);
+			int ind=1; // 0 vm postoji; 1 sve okej
+			if(!ime.equals(""))
+			{
+				if(mape.getVmovi().containsKey(ime))
+					ind = 0;
+				else
+					kojaSeMenja.setIme(ime);
+			}
+			if(!kategorija.equalsIgnoreCase(kojaSeMenja.getKategorija()))
+			{
+				Kategorija kat = mape.getKategorije().get(kategorija);
+				kojaSeMenja.setKategorija(kategorija);
+				kojaSeMenja.setBrojJezgara(kat.getBrojJezgara());
+				kojaSeMenja.setRAM(kat.getRAM());
+				kojaSeMenja.setGPU(kat.getGPU());
+			}
+			if(ulogaStr != null) kojaSeMenja.setUkljucena(uloga);
+			mape.dodajIzmenjenuVM(pos, kojaSeMenja);
+			izmene.clear();
+			izmene.put("uloga", k.getUloga().toString().toLowerCase());
+			izmene.put("izmena", String.valueOf(ind));
+			return gson.toJson(izmene);
+		});	
+	
+		post("/rest/izbrisiVM", (req, res) -> {
+			String izbrisan = "false";
+			String param = req.body().split(":|\\,")[1].replaceAll("\"|}", "");
+			Session ss = req.session(true);
+			Korisnik k = ss.attribute("user");
+			HashMap<String, String> returnMess = new HashMap<String, String>();
+			returnMess.put("obrisan", "false");
+			returnMess.put("uloga", k.getUloga().toString().toLowerCase());
+			boolean uspelo = mape.izbrisiVirtuelnu(param);
+			returnMess.replace("obrisan", String.valueOf(uspelo));
+			System.out.println("PARAMETAR BRISANJE " + param);
+			return gson.toJson(returnMess);
+		});
+		
 	}
 }
