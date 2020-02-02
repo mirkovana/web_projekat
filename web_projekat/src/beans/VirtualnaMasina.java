@@ -15,7 +15,17 @@ public class VirtualnaMasina {
 	private List<Aktivnost> aktivnosti;
 	private boolean ukljucena;
 	
-	public VirtualnaMasina() {}	
+	public VirtualnaMasina() {
+		this.ime = "";
+		this.kategorija = "";
+		this.brojJezgara = 0;
+		RAM = 0;
+		GPU = 0;
+		this.diskovi = new ArrayList<String>();
+		this.aktivnosti = new ArrayList<Aktivnost>();
+		this.aktivnosti.add(new Aktivnost(new Date(), new Date()));
+		this.ukljucena = true;
+	}	
 	
 
 	public VirtualnaMasina(VirtualnaMasina r) {
@@ -40,7 +50,7 @@ public class VirtualnaMasina {
 		GPU = gPU;
 		this.diskovi = new ArrayList<String>();
 		this.aktivnosti = new ArrayList<Aktivnost>();
-		this.aktivnosti.add(new Aktivnost(new Date(), null));
+		this.aktivnosti.add(new Aktivnost(new Date(), new Date()));
 		this.ukljucena = true;
 	}
 
@@ -103,8 +113,6 @@ public class VirtualnaMasina {
 		return "VirtualnaMasina [ime=" + ime + ", kategorija=" + kategorija + ", brojJezgara=" + brojJezgara + ", RAM="
 				+ RAM + ", GPU=" + GPU + ", ukljucena=" + ukljucena + "]";
 	}
-	
-	
 	
 	
 }

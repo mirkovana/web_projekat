@@ -302,4 +302,23 @@ public class Aplikacija {
 		}
 		return false;
 	}
+
+	public boolean dodajVM(VirtualnaMasina vm, String organizacija) {
+		// TODO Auto-generated method stub
+		if(!this.vmovi.containsKey(vm.getIme()))
+		{
+			Kategorija k = this.kategorije.get(vm.getKategorija());
+			vm.setGPU(k.getGPU());
+			vm.setRAM(k.getRAM());
+			vm.setBrojJezgara(k.getBrojJezgara());
+			this.vmovi.put(vm.getIme(), vm);
+			this.organizacije.get(organizacija).dodajVM(vm);
+			for(String d : vm.getDiskovi())
+			{
+				this.diskovi.get(d).setVm(vm.getIme());
+			}
+			return true;
+		}
+		return false;
+	}
 }

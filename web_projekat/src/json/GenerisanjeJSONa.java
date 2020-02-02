@@ -97,7 +97,7 @@ public class GenerisanjeJSONa {
 		kreirajIUpisiUFajl("diskovi.txt", gson.toJson(diskovi));
 	}
 	
-	private void kreirajIUpisiUFajl(String putanja, String json) {
+	public void kreirajIUpisiUFajl(String putanja, String json) {
 		FileWriter myWriter;
 		try {
 			myWriter = new FileWriter(putanja);

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Dodavanje korisnika</title>
+        <script src="js/jquery.min.js"></script>
+        <script src="js/script2.js"></script>
+		<link href="css/style.css" rel="stylesheet">
+		<link rel="stylesheet" href="bootstrap-4.3.1-dist/css/bootstrap.min.css">
+		<script src="bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
+		<script>
+			$(document).ready( function() {
+				getKategorije();
+				getOrganizacije();
+				getDiskovi();
+			});
+		</script>
+
+</head>
+<body>
+<form id="dodajVM">
+	<table id="form_holder">
+		
+		<tr>
+			<td>
+				<label for="exampleInputEmail1">Ime</label> 
+			</td>
+			<td>
+				<input type="text" class="form-control" id="ime" aria-describedby="emailHelp" placeholder="Enter name" name="name" required>
+			</td>
+		</tr>
+		<tr id = "organizacija">
+			<td>
+				<label for="exampleInputEmail1">Organizacija</label> 
+			</td>
+			<td>
+				<select id = "orgSelect" name = "organizacija">
+				  <option disabled selected value> -- select an option -- </option>
+				</select>
+			</td>
+		</tr>
+		<tr id = "kategorija">
+			<td>
+				<label for="exampleInputEmail1">Kategorija</label> 
+			</td>
+			<td>
+				<select id = "kategorijaSelect" name = "kategorija" onchange="selectPromena()">
+				  <option disabled selected value> -- select an option -- </option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label for="exampleInputBrJezgra">Broj jezgra</label> 
+			</td>
+		
+			<td>
+				<input type="text" class="form-control" id="brj" placeholder = "" disabled="disabled">
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label for="exampleInputPassword1">RAM</label> 
+			</td>
+		
+			<td>
+				<input type="text" class="form-control" id="ram" placeholder = "" disabled="disabled">
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label for="exampleInputBrJezgra">GPU</label> 
+			</td>
+		
+			<td>
+				<input type="text" class="form-control" id="gpu" placeholder = "" disabled="disabled">
+			</td>
+		</tr>	
+		<tr>
+			<td>
+				<label for="exampleInputEmail1">Diskovi</label> 
+			</td>
+			<td id = "diskovi">
+				
+			</td>
+		</tr>	
+		<tr>
+		 <td align="center"><input type="button" value="Dodaj" onclick="dodajVM()" class="btn btn-primary"></td>
+		</tr>	
+	</table>
+	<fieldset id="log_war"></fieldset>
+	</form>
+</body>
+</html>

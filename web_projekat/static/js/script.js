@@ -319,7 +319,7 @@ function ucitajOrganizacije() {
 		dataType: "json",
 		complete: function(data) {
 			organizacije = JSON.parse(data.responseText);
-			console.log(organizacije);			
+			console.log(organizacije);	
 			var table = $("#tabela_ostali_podaci");
 			$("#tabela_ostali_podaci").show();
 			$("#tr_forma_diskovi").hide();
@@ -333,7 +333,7 @@ function ucitajOrganizacije() {
 				table.append(makeTableRowIzbor("organizacije",o));
 			}
 			console.log(korisnikUloga);
-			$(".prikaz").append("<br><button id = \"dodaj\" onclick=\"\" ><a href = \"dodajOrganizaciju.html\" class=\"btn btn-primary\">Dodaj</a></button>");
+			$(".prikaz").append("<button id = \"dodaj\" onclick=\"\" ><a href = \"dodajOrganizaciju.html\" class=\"btn btn-primary\">Dodaj</a></button>");
 			$("#homepage").show();
 		}
 	});
@@ -360,7 +360,7 @@ function ucitajKorisnike() {
 			for(let k of korisnici) {
 				table.append(makeTableRowIzbor("korisnici",k));
 			}
-			$(".prikaz").append("<br><button id = \"dodaj\" onclick=\"\"><a href = \"dodajKorisnika.html\" class=\"btn btn-primary\">Dodaj</a></button>");
+			$(".prikaz").append("<button id = \"dodaj\" onclick=\"\"><a href = \"dodajKorisnika.html\" class=\"btn btn-primary\">Dodaj</a></button>");
 			$("#homepage").show();
 		}
 	});
@@ -383,12 +383,12 @@ function ucitajKategorije() {
 			$("button#dodaj").remove();
 			$("#pretraga").hide();
 			$("#filter").hide();
-			document.getElementById('filter').remove();
+			//document.getElementById('filter').remove();
 			$("#tabela_header").append(tableHeader("kategorije"));
 			for(let k of kategorije) {
 				table.append(makeTableRowIzbor("kategorije",k));
 			}
-			$(".prikaz").append("<br><button id = \"dodaj\" onclick=\"\" ><a href = \"dodajKategoriju.html\" class=\"btn btn-primary\">Dodaj</a></button>");
+			$(".prikaz").append("<button id = \"dodaj\" onclick=\"\" ><a href = \"dodajKategoriju.html\" class=\"btn btn-primary\">Dodaj</a></button>");
 			$("#homepage").show();
 		}
 	});
@@ -408,12 +408,13 @@ function ucitajDiskove(uloga) {
 			var table = $("#tabela_ostali_podaci");
 			$("#tabela_ostali_podaci tbody tr").remove();
 			$("#brisi").remove();
+			$("#dodaj").remove();
 			$("#tabela_header").append(tableHeader("diskovi"));
 			for(let d of diskovi) {
 				table.append(makeTableRowIzbor("diskovi",d));
 			}
             if(uloga.localeCompare("ADMIN")>-1)
-            	$(".prikaz").append("<br><button id = \"dodaj\" onclick=\"\"><a href = \"dodajDisk.html\" class=\"btn btn-primary\">Dodaj</a></button>"); 
+            	$(".prikaz").append("<button id = \"dodaj\" onclick=\"\"><a href = \"dodajDisk.html\" class=\"btn btn-primary\">Dodaj</a></button>"); 
 			
 			$("#homepage").show();
 		}
@@ -580,6 +581,7 @@ function loadVM(virtuelneMasine) {
 	for(let vm of virtuelneMasine) {
 		table.append(makeTableRow(vm));
 	}
+	$(".prikaz").append("<button id = \"dodaj\" onclick=\"\"><a href = \"dodajVirtuelnuMasinu.html\" class=\"btn btn-primary\">Dodaj</a></button>"); 
 }
 
 
@@ -735,4 +737,8 @@ function addKategorija() {
 			}
 		} 
 	});
+}
+
+function vmDodaj(){
+	window.location.replace("/dodajVirtuelnuMasinu.html");
 }

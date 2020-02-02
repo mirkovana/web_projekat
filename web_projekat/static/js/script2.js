@@ -135,14 +135,24 @@ function getOrganizacije() // da bi se ubacile u select tag
 		dataType: "json",
 		complete: function(data) {
 			organizacije = JSON.parse(data.responseText);
-			console.log(organizacije);			
-			for(let o of organizacije) {
+			console.log(organizacije);	
+			if(organizacije.length!== undefined){
+				for(let o of organizacije) {
+					var x = document.getElementById("orgSelect");
+					var opt = document.createElement("option");
+					opt.text = o.ime;
+					opt.value = o.ime; 
+					x.add(opt); 
+					console.log(o.ime);			
+				}
+			}
+			else{
 				var x = document.getElementById("orgSelect");
 				var opt = document.createElement("option");
-				opt.text = o.ime;
-				opt.value = o.ime; 
+				opt.text = organizacije.ime;
+				opt.value = organizacije.ime; 
 				x.add(opt); 
-				console.log(o.ime);			
+				console.log(organizacije.ime);	
 			}
 		}
 	});
@@ -165,6 +175,33 @@ function getKategorije()
 				opt.value = o.ime; 
 				x.add(opt); 
 				console.log(o.ime);			
+			}
+		}
+	});
+}
+
+function getDiskovi(){
+	$.ajax({
+		url: "rest/ucitajDiskove",
+		type: "GET",
+		contentType: "application/json",
+		dataType: "json",
+		complete: function(data) {
+			diskovi = JSON.parse(data.responseText);
+			console.log(diskovi);
+			var i = 0;
+			for(let o of diskovi) {
+				i++;
+				console.log(o);
+				var opt = document.getElementById("diskovi");
+				var x = document.createElement("INPUT");
+				var txt = document.createTextNode(`${o.ime}`);
+				x.setAttribute("type", "checkbox");
+				x.setAttribute("name", "disk"+i);
+				x.setAttribute("value", o.ime);				
+				//document.getElementById('diskovi').innerHTML = `${o.ime}`;
+				opt.appendChild(x); 	
+				opt.appendChild(txt); 
 			}
 		}
 	});
@@ -403,5 +440,42 @@ function obrisiVM(){
 			}
 				
 		}
+	});
+}
+
+function dodajVM(){
+	var data2 = getFormData($("#dodajVM")); 
+	var s = JSON.stringify(data2);
+	$.ajax({
+		url: "rest/dodajVM",
+		type: "POST",
+		data: s,
+		contentType: "application/json",
+		dataType: "json",
+		complete : function (data) {
+			d = JSON.parse(data.responseText);
+			korisnikUloga = d.uloga;
+			if(d.added.localeCompare("true")==0){
+				if(korisnikUloga.localeCompare("superadmin")==0)
+					window.location.replace("/supAdminPocetna.html");
+				else if(korisnikUloga.localeCompare("admin")==0)
+					window.location.replace("/adminPocetna.html");
+				else
+					window.location.replace("/korisnikPOcetna.html");
+			}
+			else{
+				if(d.added.localeCompare("imaKorisnik")==0)	{
+					$("#log_war").text("Takav korisnik vec postoji!");
+					$("#log_war").css('color', 'red');
+					$("#log_war").show();
+				}
+				else{
+					$("#log_war").text("Nisu sva polja popunjena!");
+					$("#log_war").css('color', 'red');
+					$("#log_war").show();
+				}
+			} 
+				
+		} 
 	});
 }

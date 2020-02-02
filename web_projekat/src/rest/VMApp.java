@@ -287,6 +287,7 @@ public class VMApp {
 				mape.getOrganizacije().remove(orgIme);
 				mape.getOrganizacije().put(novaOrg.getIme(), novaOrg);
 				returnMess.replace("added", "true");
+				upisiOrganizacije();
 				return gson.toJson(returnMess);
 			}
 		});
@@ -339,6 +340,7 @@ public class VMApp {
 			izmene.clear();
 			izmene.put("uloga", k.getUloga().toString().toLowerCase());
 			izmene.put("izmena", String.valueOf(ind));
+			upisiKorisnike();
 			return gson.toJson(izmene);
 		});
 		
@@ -445,7 +447,8 @@ public class VMApp {
 					//k.addRacun(o.getIme());
 					System.out.println("Nije nasao disk");
 					mape.getDiskovi().put(d.getIme(), d);
-					returnMess.replace("added", "true");				
+					returnMess.replace("added", "true");
+					upisiDiskove();
 				}
 				return gson.toJson(returnMess);	
 			}
@@ -466,6 +469,7 @@ public class VMApp {
 				mape.getDiskovi().remove(disIme);
 				mape.getDiskovi().put(noviDis.getIme(), noviDis);
 				returnMess.replace("added", "true");
+				upisiDiskove();
 				return gson.toJson(returnMess);
 			}
 		});
@@ -490,6 +494,7 @@ public class VMApp {
 				//k.deleteRacun(brRacuna);
 				mape.getDiskovi().remove(ime);
 				msg = "true";
+				upisiDiskove();
 			}
 			
 			return "{\"good\": " + msg + "}";
@@ -527,7 +532,8 @@ public class VMApp {
 					//k.addRacun(o.getIme());
 					System.out.println("Nije nasao disk");
 					mape.getKategorije().put(d.getIme(), d);
-					returnMess.replace("added", "true");				
+					returnMess.replace("added", "true");
+					upisiKategorije();
 				}
 				return gson.toJson(returnMess);	
 			}
@@ -579,6 +585,7 @@ public class VMApp {
 			mape.dodajKorisnikaUorganizaciju(korisnikForma);	
 			mape.dodajKorisnika(korisnikForma);
 			returnMess.replace("added", "true");
+			upisiKorisnike();
 			return gson.toJson(returnMess);
 		});
 		
@@ -595,6 +602,7 @@ public class VMApp {
 			mape.izbrisiKorisnika(param);
 			returnMess.replace("obrisan", "true");
 			System.out.println("PARAMETAR BRISANJE " + param);
+			upisiKorisnike();
 			return gson.toJson(returnMess);
 		});
 		
@@ -631,6 +639,7 @@ public class VMApp {
 			izmene.clear();
 			izmene.put("uloga", k.getUloga().toString().toLowerCase());
 			izmene.put("izmena", String.valueOf(ind));
+			upisiVirtuelne();
 			return gson.toJson(izmene);
 		});	
 	
@@ -645,8 +654,73 @@ public class VMApp {
 			boolean uspelo = mape.izbrisiVirtuelnu(param);
 			returnMess.replace("obrisan", String.valueOf(uspelo));
 			System.out.println("PARAMETAR BRISANJE " + param);
+			upisiVirtuelne();
 			return gson.toJson(returnMess);
 		});
 		
+		post("/rest/dodajVM", (req, res) -> {
+			Session ss = req.session(true);
+			Korisnik k = ss.attribute("user");
+			HashMap<String, String> returnMess = new HashMap<String, String>();
+			returnMess.put("added", "imaVM");
+			returnMess.put("uloga", k.getUloga().toString().toLowerCase());
+			String[] params = req.body().split(":|\\,");
+			System.out.println(req.body());
+			for(int i = 0; i < params.length ; i++) 
+			{
+				params[i] = params[i].replaceAll("\"|}", "");
+			}
+			if(params.length<8)
+			{
+				returnMess.replace("added", "prazno");
+				return gson.toJson(returnMess);
+			}
+			if(!params[0].equalsIgnoreCase("{name") || !params[2].equalsIgnoreCase("organizacija") || !params[4].equalsIgnoreCase("kategorija"))
+			{
+				returnMess.replace("added", "prazno");
+				return gson.toJson(returnMess);
+			}
+			String ime = params[1], organizacija = params[3], kategorija = params[5];
+			ArrayList<String> diskovi = new ArrayList<String>();
+			for(int i = 7; i<params.length; i+=2)
+				diskovi.add(params[i]);
+			VirtualnaMasina vm = new VirtualnaMasina();
+			vm.setIme(ime);
+			vm.setDiskovi(diskovi);
+			vm.setKategorija(kategorija);
+			if(mape.dodajVM(vm,organizacija)) returnMess.replace("added", "true");
+			upisiVirtuelne();
+			return gson.toJson(returnMess);
+		});
+	}
+
+
+	private static void upisiOrganizacije() {
+		// TODO Auto-generated method stub
+		xml.kreirajIUpisiUFajl("organizacije.txt", gson.toJson(mape.getOrganizacije()));
+	}
+
+
+	private static void upisiDiskove() {
+		// TODO Auto-generated method stub
+		xml.kreirajIUpisiUFajl("diskovi.txt", gson.toJson(mape.getDiskovi()));
+	}
+
+
+	private static void upisiKategorije() {
+		// TODO Auto-generated method stub
+		xml.kreirajIUpisiUFajl("kategorije.txt", gson.toJson(mape.getKategorije()));
+	}
+
+
+	private static void upisiKorisnike() {
+		// TODO Auto-generated method stub
+		xml.kreirajIUpisiUFajl("korisnici.txt", gson.toJson(mape.getKorisnici()));
+	}
+
+
+	private static void upisiVirtuelne() {
+		// TODO Auto-generated method stub
+		xml.kreirajIUpisiUFajl("vmasine.txt", gson.toJson(mape.getVmovi()));
 	}
 }
