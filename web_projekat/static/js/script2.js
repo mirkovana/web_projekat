@@ -249,6 +249,7 @@ function KorisnikKojiSeMenja(kor){
 	if(kor.localeCompare("none")===0){
 		getUlogovan();
 		$("#obrisi_btn").hide();
+		document.getElementById("email").disabled = false;
 		return;
 	}
 	console.log("KORISNIK " + kor);
@@ -263,6 +264,7 @@ function KorisnikKojiSeMenja(kor){
 					document.getElementById("ime").placeholder = o.ime;
 					document.getElementById("prezime").placeholder = o.prezime;
 					document.getElementById("email").placeholder = o.email;
+					document.getElementById("email").disabled = true;
 					document.getElementById("lozinka").placeholder = o.lozinka;
 					break;
 				}

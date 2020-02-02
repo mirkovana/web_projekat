@@ -124,31 +124,28 @@ public class VMApp {
 			 res.type("application/json");
 			String[] params = req.body().split(":|\\,");
 			 ArrayList<VirtualnaMasina> virtuelneMasine = new ArrayList<VirtualnaMasina>();
-			 String ime = params[1].replaceAll("\"", "");
-			 String brojJezgara = params[3].replaceAll("\"", "");
-			 String ram = params[5].replaceAll("\"", "");
-			 String gpu = params[7].replaceAll("\"", "");
-			 String kat = params[9].replaceAll("\"|}", "");
-			 if(!ime.equals(""))
-			 {
-				 System.out.println("ime");
-				 for(VirtualnaMasina r : mape.getVmovi().values()) {
-					if(r.getIme().equalsIgnoreCase(ime))
-						virtuelneMasine.add(r);
-				}
-			 }
+			 //String ime = params[1].replaceAll("\"", "");
+			 String brojJezgara = params[1].replaceAll("\"", "");
+			 String ram = params[3].replaceAll("\"", "");
+			 String gpu = params[5].replaceAll("\"|}", "");
+			 //String kat = params[9].replaceAll("\"|}", "");
 			 if(!brojJezgara.equals(""))
 			 {
 				 System.out.println("brojJezgara");
-				 int i = Integer.parseInt(brojJezgara);
+				 int manji = Integer.parseInt(brojJezgara.split("AND")[0]);
+				 int veci = 0;
+				 if(brojJezgara.split("AND").length==2)	
+					 veci = Integer.parseInt(brojJezgara.split("AND")[1]);
+				 else 
+					 veci = manji;
 				 if(virtuelneMasine.isEmpty()){
 					 for(VirtualnaMasina r : mape.getVmovi().values()) 
-						if(r.getBrojJezgara()==i)
+						if(r.getBrojJezgara()>=manji && r.getBrojJezgara()<=veci)
 							virtuelneMasine.add(r);
 					 }
 				 else {
 					 for(VirtualnaMasina r : virtuelneMasine) 
-							if(r.getBrojJezgara()!=i)
+							if(r.getBrojJezgara()>=manji && r.getBrojJezgara()<=veci)
 								virtuelneMasine.remove(r);
 				 }
 			 }
@@ -156,49 +153,53 @@ public class VMApp {
 			 {
 				 System.out.println("ram");
 
-				 int i = Integer.parseInt(ram);
+				 int manji = Integer.parseInt(ram.split("AND")[0]);
+				 int veci = 0;
+				 if(ram.split("AND").length==2)	
+					 veci = Integer.parseInt(ram.split("AND")[1]);
+				 else 
+					 veci = manji;
 				 if(virtuelneMasine.isEmpty()){
 					 for(VirtualnaMasina r : mape.getVmovi().values()) 
-						if(r.getRAM()==i)
+						if(r.getRAM()>=manji && r.getRAM()<=veci)
 							virtuelneMasine.add(r);
 					 }
 				 else {
-					 for(VirtualnaMasina r : virtuelneMasine) 
-							if(r.getRAM()!=i)
-								virtuelneMasine.remove(r);
+					 int n = virtuelneMasine.size();
+					 for(int i = 0; i<n; i++)
+					 if(virtuelneMasine.get(i).getRAM()<manji || virtuelneMasine.get(i).getRAM()>veci)
+						{
+							virtuelneMasine.remove(i);
+							i--;
+							n--;
+						}
 				 }
 			 }
 			 if(!gpu.equals(""))
 			 {
 				 System.out.println("gpu");
-
-				 int i = Integer.parseInt(gpu);
+				 int manji = Integer.parseInt(gpu.split("AND")[0]);
+				 int veci = 0;
+				 if(gpu.split("AND").length==2)	
+					 veci = Integer.parseInt(gpu.split("AND")[1]);
+				 else 
+					 veci = manji;
 				 if(virtuelneMasine.isEmpty()){
 					 for(VirtualnaMasina r : mape.getVmovi().values()) 
-						if(r.getGPU()==i)
+						if(r.getGPU()>=manji && r.getGPU()<=veci)
 							virtuelneMasine.add(r);
 				 }
 				 else {
-					 for(VirtualnaMasina r : virtuelneMasine) 
-							if(r.getGPU()!=i)
-								virtuelneMasine.remove(r);
+					 int n = virtuelneMasine.size();
+					 for(int i = 0; i<n; i++)
+					 if(virtuelneMasine.get(i).getGPU()<manji || virtuelneMasine.get(i).getGPU()>veci)
+						{
+							virtuelneMasine.remove(i);
+							i--;
+							n--;
+						}
 				 }
 					
-			 }
-			 if(!kat.equals(""))
-			 {
-				 System.out.println("kategorija "+ kat);
-
-				 if(virtuelneMasine.isEmpty()){
-					 for(VirtualnaMasina r : mape.getVmovi().values()) 
-						 if(r.getKategorija().equalsIgnoreCase(kat))
-							virtuelneMasine.add(r);
-					 }				
-				 else {
-					 for(VirtualnaMasina r : virtuelneMasine) 
-							if(!r.getKategorija().equalsIgnoreCase(kat))
-								virtuelneMasine.remove(r);
-				 }
 			 }
 			 return gson.toJson(virtuelneMasine);
 		});
@@ -318,12 +319,14 @@ public class VMApp {
 			String email = izmene.get("email"), ime = izmene.get("ime"), pre = izmene.get("prezime");
 			String loz = izmene.get("pass"), loz2 = izmene.get("pass2");
 			int ind=1; // 0 korisnik postoji; -1 lozinka nije uneta; -2 lozinke se ne poklapaju
-			if(!email.equals(""))
-			{
-				if(mape.getKorisnici().containsKey(email))
-					ind = 0;
-				else
-					novi.setEmail(email);
+			if(email!=null) {
+				if(!email.equals(""))
+				{
+					if(mape.getKorisnici().containsKey(email))
+						ind = 0;
+					else
+						novi.setEmail(email);
+				}
 			}
 			if(!ime.equals(""))
 				novi.setIme(ime);

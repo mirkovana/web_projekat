@@ -24,7 +24,7 @@ public class VirtualnaMasina {
 		this.diskovi = new ArrayList<String>();
 		this.aktivnosti = new ArrayList<Aktivnost>();
 		this.aktivnosti.add(new Aktivnost(new Date(), new Date()));
-		this.ukljucena = true;
+		this.ukljucena = false;
 	}	
 	
 
@@ -114,5 +114,24 @@ public class VirtualnaMasina {
 				+ RAM + ", GPU=" + GPU + ", ukljucena=" + ukljucena + "]";
 	}
 	
-	
+	@Override
+	public boolean equals(Object o) { 
+		  
+        // If the object is compared with itself then return true   
+        if (o == this) { 
+            return true; 
+        } 
+  
+        /* Check if o is an instance of Complex or not 
+          "null instanceof [type]" also returns false */
+        if (!(o instanceof VirtualnaMasina)) { 
+            return false; 
+        } 
+          
+        // typecast o to Complex so that we can compare data members  
+        VirtualnaMasina c = (VirtualnaMasina) o; 
+          
+        // Compare the data members and return accordingly  
+        return c.getIme().equalsIgnoreCase(this.getIme()); 
+    } 	
 }
