@@ -150,18 +150,64 @@ function proveriUlogovanogDisk(disk){
 	});
 }
 
-function proveriUlogovanogKategorija(){
+function proveriUlogovanogKategorija(x){
 	$.ajax({
 		url: "rest/ucitajKategorije",
 		type: "GET",
 		complete: function(data) {
 			d = JSON.parse(data.responseText);
-			console.log("popunjavanje polja iz skrpta za izmenu diska "+d+" kraj");
-            var podaci = d[0];
-			document.getElementById("ime").value = podaci.ime;
-			document.getElementById("brojJezgara").value = podaci.brojJezgara;
-			document.getElementById("RAM").value = podaci.RAM;
-			document.getElementById("GPU").value = podaci.GPU;
+			for(let o of d) 
+	            if(o.ime.localeCompare(x)==0){
+					document.getElementById("ime").placeholder = o.ime;
+					document.getElementById("brojJezgara").placeholder = o.brojJezgara;
+					document.getElementById("RAM").placeholder = o.RAM;
+					document.getElementById("GPU").placeholder = o.GPU;
+				}
+		}
+	});
+}
+function obrisiKat(){
+	var data2 = {};
+	data2["ime"] = document.getElementById("ime").placeholder;
+	var s = JSON.stringify(data2);
+	$.ajax({
+		url: "rest/obrisiKat",
+		type: "POST",
+		data: s,
+		contentType: "application/json",
+		dataType: "json",
+		complete : function (data) {
+			d = JSON.parse(data.responseText);
+			var mess = d.good;
+			if(mess){
+				window.location.replace("/supAdminPocetna.html");
+			}
+			else{
+				alert("Ne uspelo brisanje");
+			}
+		}
+	});
+}
+
+function izmKategorija(){
+	var data2 = getFormData($("#izmenaKat"));
+	data2["staraKat"] = document.getElementById("ime").placeholder;
+	var s = JSON.stringify(data2);
+	$.ajax({
+		url: "rest/izmenaKat",
+		type: "POST",
+		data: s,
+		contentType: "application/json",
+		dataType: "json",
+		complete : function (data) {
+			d = JSON.parse(data.responseText);
+			var mess = d.izmena;
+			if(mess==1){
+				window.location.replace("/supAdminPocetna.html");
+			}
+			else{
+				alert("Ne uspela izmena");
+			}
 		}
 	});
 }
@@ -243,7 +289,7 @@ function obrisiDisk() {
 
 function izmenaDisk(){
 	var data2 = getFormData($("#izmenaDisk"));
-	data2["ime"] = document.getElementById("ime").placeholder;
+	data2["stariDisk"] = document.getElementById("ime").placeholder;
 	var s = JSON.stringify(data2);
 	$.ajax({
 		url: "rest/izmenaDiska",
@@ -253,8 +299,8 @@ function izmenaDisk(){
 		dataType: "json",
 		complete : function (data) {
 			d = JSON.parse(data.responseText);
-			var mess = d.good;
-			if(mess){
+			var mess = d.izmena;
+			if(mess==1){
 				window.location.replace("/supAdminPocetna.html");
 			}
 			else{
@@ -314,8 +360,28 @@ function isLoggedOut() {
 	});
 }
 
-function izmenaOrganizacije(){
-	window.location.replace("/dodajOrganizaciju.html");
+function izmeniOrg(obj){
+	window.location.replace("/izmenaOrg.html?x="+obj);
+}
+
+function proveriOrg(x){
+	$.ajax({
+		url: "rest/ucitajOrganizacije",
+		type: "GET",
+		contentType: "application/json",
+		dataType: "json",
+		complete: function(data) {
+			organizacije = JSON.parse(data.responseText);
+			for(let d of organizacije) {
+				console.log("DDD " + x);
+				if(d.ime.localeCompare(x)==0){
+					document.getElementById("inputIme").placeholder = d.ime;
+					document.getElementById("inputOpis").placeholder = d.opis;
+					break;
+				}
+			}
+		}
+	});
 }
 
 function pretraga() {
@@ -523,7 +589,7 @@ function makeTableRowIzbor(izbor,obj) {
 	   row =
 		`<tbody>
 		<tr>
-			<td class='align-middle'><span class="link" onclick="">${obj.ime}</span></td>
+			<td class='align-middle'><span class="link" onclick="izmeniOrg('${obj.ime}')\">${obj.ime}</span></td>
 			<td class='align-middle'>${obj.opis}</td>
 			<td class='align-middle'>${obj.logo}</td>
 		</tr>
@@ -556,7 +622,7 @@ function makeTableRowIzbor(izbor,obj) {
 		row =
 			`<tbody>
 			    <tr>
-					<td class='align-middle'><span class="link" onclick="izmenaKategorije()">${obj.ime}</td>
+					<td class='align-middle'><span class="link" onclick="izmenaKategorije('${obj.ime}')">${obj.ime}</td>
 					<td class='align-middle'>${obj.brojJezgara}</td>
 					<td class='align-middle'>${obj.RAM}</td>
 					<td class='align-middle'>${obj.GPU}</td>
@@ -588,8 +654,8 @@ function getUrlVars() {
     return vars;
 }
 
-function izmenaKategorije(){
-	location.replace("izmenaKategorije.html");
+function izmenaKategorije(obj){
+	location.replace("izmenaKategorije.html?x="+obj);
 }
 
 function loadVM(virtuelneMasine) {

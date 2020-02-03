@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Dodavanje organizacije</title>
+<script src="js/jquery.min.js"></script>
+		<script src="js/script.js"></script>
+		<link href="css/style.css" rel="stylesheet">
+		<link rel="stylesheet" href="bootstrap-4.3.1-dist/css/bootstrap.min.css">
+		<script src="bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
+		<script>
+			$(document).ready( function() {
+				proveriOrg(getUrlVars()["x"]);
+			});
+		</script>
+		
+</head>
+<body>
+<form id="dodajOrganizaciju">
+	<table id="form_holder">
+		
+		<tr>
+			<td>
+				<label for="exampleInputEmail1">Ime</label> 
+			</td>
+			<td>
+				<input type="text" class="form-control" id="inputIme" aria-describedby="emailHelp" placeholder="" name="ime" required>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label for="exampleInputPassword1">Opis</label> 
+			</td>
+			<td>
+				<input type="text" class="form-control" id="inputOpis" placeholder="" name="opis" required>
+			</td>
+		</tr>
+		<tr>
+		    <td><label for="exampleInputPassword1">Logo</label></td>
+		    <td>
+		        <input type="file" id="inputFile" name="inputFile" accept="image/png, image/jpeg" capture="Dodaj">
+		    </td>
+		</tr>	
+		<tr>
+		 <td align="center"><input type="button" value="Primeni" onclick="addOrganizacija()" class="btn btn-primary"></td>
+		</tr>
+	
+	</table>
+	<fieldset id="log_war"></fieldset>
+	</form>
+</body>
+</html>

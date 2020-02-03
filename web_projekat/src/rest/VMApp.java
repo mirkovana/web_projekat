@@ -477,28 +477,110 @@ public class VMApp {
 			return "{\"good\": " + msg + "}";
 		});
 		
-		post("/rest/izmenaDiska", (req, res) -> {
+		post("/rest/obrisiKat", (req, res) -> {
 			res.type("application/json");
 			Session ss = req.session(true);
 			Korisnik k = ss.attribute("user");
-			String[] params = req.body().split(":");
+			String ime = req.body().split(":")[1].replaceAll("\"|}", "");
 			String msg = "false";
-			params[0] = params[0].replaceAll("{", "");
-			for(int i = 0; i < params.length ; i++) 
-			{
-				params[i] = params[i].replaceAll("\"|}", "");
+			
+			if(mape.getKategorije().containsKey(ime)) {
+				//k.deleteRacun(brRacuna);
+				mape.getKategorije().remove(ime);
+				msg = "true";
+				upisiKategorije();
 			}
 			
-			/* svaki param sa parnim indexom ti je name iz forme a sa neparnim vrednost
-			 poslednja dva su ti id diska u hashmapi koji preuzmes
-			 novog dodas tako sto kreiras objekat sa praznim konstruktorom i metodom set postavljas nove vrednosti ukoliko 
-			 nisu prazne ako jesu postavis vrednost starog kad sve to uradis iz hash mape obrises starog i dodas novog			 
-			 */
+			return "{\"good\": " + msg + "}";
+		});
+		
+		post("/rest/izmenaDiska", (req, res) -> {
+			res.type("application/json");
+			HashMap<String, String> izmene = gson.fromJson(req.body(), HashMap.class);
+			Session ss = req.session(true);
+			System.out.println(req.body());
+			Korisnik k = ss.attribute("user");
+			String pos = izmene.get("stariDisk");
+			Disk kojaSeMenja = mape.getDiskovi().get(pos);
+			String ime = izmene.get("ime"), tip = izmene.get("tip"), kapacitet = izmene.get("kapacitet");
+			String vm = izmene.get("vm");
+			int ind=1; // 0 disk postoji; 1 sve okej
+			if(!ime.equals(""))
+			{
+				if(mape.getDiskovi().containsKey(ime))
+					ind = 0;
+				else
+					kojaSeMenja.setIme(ime);
+			}
+			if(!tip.equalsIgnoreCase(""))
+				if(!tip.equalsIgnoreCase(kojaSeMenja.getTip().toString()))
+				{
+					kojaSeMenja.setTip(tip.equalsIgnoreCase("SSD")?tipDiska.SSD:tipDiska.HDD);
+				}
+			if(!kapacitet.equalsIgnoreCase(""))
+			{
+				if(Double.parseDouble(kapacitet)!=kojaSeMenja.getKapacitet())
+					kojaSeMenja.setKapacitet(Double.parseDouble(kapacitet));
+			}
+			if(!vm.equalsIgnoreCase(""))
+				if(!vm.equalsIgnoreCase(kojaSeMenja.getVm()))
+					kojaSeMenja.setVm(vm);
+			
+			//if(ulogaStr != null) kojaSeMenja.setUkljucena(uloga);
+			mape.dodajIzmenjenDisk(pos, kojaSeMenja);
+			izmene.clear();
+			izmene.put("uloga", k.getUloga().toString().toLowerCase());
+			izmene.put("izmena", String.valueOf(ind));
 			
 			
 			upisiDiskove();
+			upisiVirtuelne();
+			return gson.toJson(izmene);
+		});
+		
+		post("/rest/izmenaKat", (req, res) -> {
+			res.type("application/json");
+			HashMap<String, String> izmene = gson.fromJson(req.body(), HashMap.class);
+			Session ss = req.session(true);
+			System.out.println(req.body());
+			Korisnik k = ss.attribute("user");
+			String pos = izmene.get("staraKat");
+			Kategorija kojaSeMenja = mape.getKategorije().get(pos);
+			String ime = izmene.get("ime"), brojJezgara = izmene.get("brojJezgara"), RAM = izmene.get("RAM");
+			String GPU = izmene.get("GPU");
+			int ind=1; // 0 disk postoji; 1 sve okej
+			if(!ime.equals(""))
+			{
+				if(mape.getKategorije().containsKey(ime))
+					ind = 0;
+				else
+					kojaSeMenja.setIme(ime);
+			}
+			if(!brojJezgara.equalsIgnoreCase(""))
+			{
+				if(Integer.parseInt(brojJezgara)!=kojaSeMenja.getBrojJezgara())
+					kojaSeMenja.setBrojJezgara(Integer.parseInt(brojJezgara));
+			}
+			if(!RAM.equalsIgnoreCase(""))
+			{
+				if(Integer.parseInt(RAM)!=kojaSeMenja.getRAM())
+					kojaSeMenja.setRAM(Integer.parseInt(RAM));
+			}
+			if(!GPU.equalsIgnoreCase(""))
+			{
+				if(Integer.parseInt(GPU)!=kojaSeMenja.getGPU())
+					kojaSeMenja.setGPU(Integer.parseInt(GPU));
+			}
+			//if(ulogaStr != null) kojaSeMenja.setUkljucena(uloga);
+			mape.dodajKategoriju(pos, kojaSeMenja);
+			izmene.clear();
+			izmene.put("uloga", k.getUloga().toString().toLowerCase());
+			izmene.put("izmena", String.valueOf(ind));
 			
-			return "{\"good\": " + msg + "}";
+			
+			upisiDiskove();
+			upisiVirtuelne();
+			return gson.toJson(izmene);
 		});
 		
 		before("/rest/addKategorija", (req, res) -> {

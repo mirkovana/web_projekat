@@ -10,7 +10,7 @@
 		<script src="bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
 		<script>
 			$(document).ready( function() {
-				proveriUlogovanogKategorija();
+				proveriUlogovanogKategorija(getUrlVars()["x"]);
 			});
 		</script>
         <style>
@@ -24,7 +24,7 @@
 		</style>
 </head>
 <body>
-	<form id="izmenaDisk">
+	<form id="izmenaKat">
 	<table id="tabela_izmena_disk">
 		
 		<tr>
@@ -60,8 +60,8 @@
 			</td>
 		</tr>
 		<tr>
-		 <td align="center"><input type="button" value="Primeni izmenu" onclick="addKategorija()" class="btn btn-primary"></td>
-		 <td align="center"><input type="button" value="Izbrisi disk" onclick="obrisiDisk(document.getElementById('ime').value)" class="btn btn-primary"></td>
+		 <td align="center"><input type="button" value="Primeni izmenu" onclick="izmKategorija()" class="btn btn-primary"></td>
+		 <td align="center"><input type="button" value="Izbrisi kategoriju" onclick="obrisiKat()" class="btn btn-primary"></td>
 		</tr>
 		
 	

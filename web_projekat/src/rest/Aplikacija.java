@@ -321,4 +321,30 @@ public class Aplikacija {
 		}
 		return false;
 	}
+
+	public void dodajIzmenjenDisk(String pos, Disk kojaSeMenja) {
+		// TODO Auto-generated method stub
+		this.diskovi.remove(pos);
+		this.diskovi.put(kojaSeMenja.getIme(), kojaSeMenja);
+		for(VirtualnaMasina vm:this.vmovi.values()) {
+			if(vm.getDiskovi().contains(pos)) {
+				vm.getDiskovi().remove(pos);
+				vm.dodajDisk(kojaSeMenja);
+			}
+		}
+	}
+
+	public void dodajKategoriju(String pos, Kategorija kojaSeMenja) {
+		// TODO Auto-generated method stub
+		this.kategorije.remove(pos);
+		this.kategorije.put(kojaSeMenja.getIme(), kojaSeMenja);
+		for(VirtualnaMasina vm : this.vmovi.values()) {
+			if(vm.getKategorija().equalsIgnoreCase(pos)) {
+				vm.setKategorija(kojaSeMenja.getIme());
+				vm.setRAM(kojaSeMenja.getRAM());
+				vm.setGPU(kojaSeMenja.getGPU());
+				vm.setBrojJezgara(kojaSeMenja.getGPU());
+			}
+		}
+	}
 }
