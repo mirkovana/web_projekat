@@ -19,6 +19,7 @@ import beans.Organizacija;
 import beans.Uloga;
 import beans.VirtualnaMasina;
 import beans.Disk;
+import beans.Disk.tipDiska;
 import beans.Kategorija;
 import json.GenerisanjeJSONa;
 import spark.Session;
@@ -426,55 +427,28 @@ public class VMApp {
 		
 		post("/rest/addDisk", (req, res) -> {
 			res.type("application/json");
-			Disk d = gson.fromJson(req.body(), Disk.class);
 			Session ss = req.session(true);
 			Korisnik k = ss.attribute("user");
 			HashMap<String, String> returnMess = new HashMap<String, String>();
-			 returnMess.put("added", "false");
-			 returnMess.put("uloga", k.getUloga().toString().toLowerCase());
-			System.out.println("Uloga korisnika : " +k.getUloga());
-			if(k.getUloga().equals(Uloga.SUPERADMIN) || k.getUloga().equals(Uloga.ADMIN))
-			{
-				System.out.println("req.body pre ifa "+req.body());
-				
-				
-				if(d.getIme()==null || d.getKapacitet()==0.0d || d.getVm()==null)
-					{
-						System.out.println("req.body iz add disk vma "+req.body());
-						System.out.println("disk ime iz add disk vma "+d.getIme());
-						System.out.println("disk kapacitet iz add disk vma "+d.getKapacitet());
-						System.out.println("disk vm iz add disk vma "+d.getVm());
-						return gson.toJson(returnMess);		
-					}
-				if(!mape.getDiskovi().containsKey(d.getIme())) {
-					//k.addRacun(o.getIme());
-					System.out.println("Nije nasao disk");
-					mape.getDiskovi().put(d.getIme(), d);
-					returnMess.replace("added", "true");
-					upisiDiskove();
+			String[] params = req.body().split(":|\\,");
+			returnMess.put("added", "false");
+			returnMess.put("uloga", k.getUloga().toString().toLowerCase());
+			for(int i = 0; i < params.length ; i++) 
+				params[i] = params[i].replaceAll("\"|}", "");
+			for(int i = 0; i < params.length ; i++) {
+				if(params[i].equals("")){
+					returnMess.replace("added", "prazno");
+					return gson.toJson(returnMess);
 				}
-				return gson.toJson(returnMess);	
 			}
-			else
-			{
-				String disIme="";
-				Disk noviDis=null;
-				for(Disk dis : mape.getDiskovi().values())
-				{
-					disIme = dis.getIme();
-					if(d.getIme()!= null)dis.setIme(d.getIme());
-					if(d.getKapacitet()!= 0.0d)dis.setKapacitet(d.getKapacitet());
-					if(d.getVm()!= null)dis.setVm(d.getVm());
-					noviDis = dis;
-					
-					break;
-				}
-				mape.getDiskovi().remove(disIme);
-				mape.getDiskovi().put(noviDis.getIme(), noviDis);
-				returnMess.replace("added", "true");
-				upisiDiskove();
-				return gson.toJson(returnMess);
-			}
+			Disk d = new Disk();
+			d.setIme(params[1]);
+			d.setKapacitet(Double.parseDouble(params[3]));
+			d.setVm(params[5]);
+			mape.getDiskovi().put(d.getIme(), d);
+			upisiDiskove();
+			returnMess.replace("added", "true");
+			return gson.toJson(returnMess);
 		});
 		
 		before("/rest/obrisiDisk", (req, res) -> {
@@ -490,7 +464,7 @@ public class VMApp {
 			res.type("application/json");
 			Session ss = req.session(true);
 			Korisnik k = ss.attribute("user");
-			String ime = req.queryParams("ime");
+			String ime = req.body().split(":")[1].replaceAll("\"|}", "");
 			String msg = "false";
 			
 			if(mape.getDiskovi().containsKey(ime)) {
@@ -499,6 +473,30 @@ public class VMApp {
 				msg = "true";
 				upisiDiskove();
 			}
+			
+			return "{\"good\": " + msg + "}";
+		});
+		
+		post("/rest/izmenaDiska", (req, res) -> {
+			res.type("application/json");
+			Session ss = req.session(true);
+			Korisnik k = ss.attribute("user");
+			String[] params = req.body().split(":");
+			String msg = "false";
+			params[0] = params[0].replaceAll("{", "");
+			for(int i = 0; i < params.length ; i++) 
+			{
+				params[i] = params[i].replaceAll("\"|}", "");
+			}
+			
+			/* svaki param sa parnim indexom ti je name iz forme a sa neparnim vrednost
+			 poslednja dva su ti id diska u hashmapi koji preuzmes
+			 novog dodas tako sto kreiras objekat sa praznim konstruktorom i metodom set postavljas nove vrednosti ukoliko 
+			 nisu prazne ako jesu postavis vrednost starog kad sve to uradis iz hash mape obrises starog i dodas novog			 
+			 */
+			
+			
+			upisiDiskove();
 			
 			return "{\"good\": " + msg + "}";
 		});

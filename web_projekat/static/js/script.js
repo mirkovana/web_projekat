@@ -121,8 +121,8 @@ function proveriUlogovanog(){
 		complete: function(data) {
 			d = JSON.parse(data.responseText);
 			console.log(d);
-			document.getElementById("inputIme").value = d.ime;
-			document.getElementById("inputOpis").value = d.opis;
+			document.getElementById("inputIme").placeholder = d.ime;
+			document.getElementById("inputOpis").placeholde = d.opis;
 		}
 	});
 }
@@ -137,11 +137,11 @@ function proveriUlogovanogDisk(disk){
 			for(let o of d) {
 				if(o.ime.localeCompare(disk)===0){
 					console.log("popunjavanje polja iz skrpta za izmenu diska "+o+" kraj");
-					document.getElementById("ime").value = o.ime;
+					document.getElementById("ime").placeholder = o.ime;
 					$("tip").val(o.tipDiska);
 					//document.getElementById("tip").value = podaci.tip;
-					document.getElementById("kapacitet").value = o.kapacitet;
-					document.getElementById("nazivVM").value = o.vm;
+					document.getElementById("kapacitet").placeholder = o.kapacitet;
+					document.getElementById("nazivVM").placeholder = o.vm;
 					break;
 				}
 			}
@@ -218,20 +218,49 @@ function obrisi(brojRacuna) {
 	});
 }
 
-function obrisiDisk(ime) {
+function obrisiDisk() {
+	var data2 = {};
+	data2["ime"] = document.getElementById("ime").placeholder;
+	var s = JSON.stringify(data2);
 	$.ajax({
-		url: "rest/obrisiDisk?ime=" + ime,
+		url: "rest/obrisiDisk",
 		type: "POST",
+		data: s,
+		contentType: "application/json",
+		dataType: "json",
 		complete : function (data) {
 			d = JSON.parse(data.responseText);
-			console.log(d);
-			if(d.good) {
-				$("td").filter(function() {
-				    return $(this).text() == ime;
-				}).closest("tr").remove();
-				$("id='" + ime + "'").remove();
+			var mess = d.good;
+			if(mess){
+				window.location.replace("/supAdminPocetna.html");
 			}
-		} 
+			else{
+				alert("Ne uspelo brisanje");
+			}
+		}
+	});
+}
+
+function izmenaDisk(){
+	var data2 = getFormData($("#izmenaDisk"));
+	data2["ime"] = document.getElementById("ime").placeholder;
+	var s = JSON.stringify(data2);
+	$.ajax({
+		url: "rest/izmenaDiska",
+		type: "POST",
+		data: s,
+		contentType: "application/json",
+		dataType: "json",
+		complete : function (data) {
+			d = JSON.parse(data.responseText);
+			var mess = d.good;
+			if(mess){
+				window.location.replace("/supAdminPocetna.html");
+			}
+			else{
+				alert("Ne uspela izmena");
+			}
+		}
 	});
 }
 
@@ -699,6 +728,7 @@ function loadDiskovi(diskovii) {
 
 function addDisk() {
 	var data = getFormData($("#dodajDisk")); //ili dic class="prikaz" NIJE DOBRO OVO SA tabela_ostali_podaci
+	data["stariDisk"] = document.getElementById("ime").placeholder;
 	var racun = JSON.stringify(data);
 	$.ajax({
 		url: "rest/addDisk",
@@ -708,13 +738,15 @@ function addDisk() {
 		dataType: "json",
 		complete : function (data) {
 			d = JSON.parse(data.responseText);			
-			if(d.added) {
+			if(d.added.localeCompare("true")==0) {
 				console.log("ulazzzz");
 				if(d.uloga.localeCompare("superadmin")==0)
 					window.location.replace("/supAdminPocetna.html");
 				else
 					window.location.replace("/adminPocetna.html");
 			}
+			else
+				alert("Nije uspelo");
 		} 
 	});
 }
